@@ -1,0 +1,41 @@
+import random
+from bank_system import BettingSystem
+
+class BlindDecider:
+    def __init__(self, user_bank, pot, visual_logic): # Constructor
+        self.user_bank = user_bank
+        self.pot = pot
+        self.small_blind = None
+        self.recent_bet = None
+        self.ai_bet = None
+        self.visual_logic = visual_logic # Visual logic for the game
+
+    def decide_blind(self): # Method to decide the blind
+        random_num = random.randint(0,1) # Picks either 0 or 1, and that utlises randomness to decide who is the small blind
+        if random_num  == 0:
+            self.small_blind = True # The user is the small blind
+        else:
+            self.small_blind = False # The user is not the small blind, hence the AI is the small blind
+        return [self.pot, self.ai_bet, self.recent_bet, self.small_blind]
+        #Output format: [pot, ai_bet, recent_bet, small_blind]
+
+    def small_blind_user(self): # Method for the user small blind and the AI big blind logic
+        self.visual_logic.update_log("You are the small blind. Please place your bet.") # Outputs a message to the tkinter window
+        betting_system = BettingSystem(self.user_bank, visual_logic=self.visual_logic) # Create an instance of the BettingSystem class
+        result = betting_system.place_bet() # Call the place_bet method
+        self.user_bank, self.recent_bet = result # Unpack the result
+        self.pot += self.recent_bet + (self.recent_bet*2) # Add the recent bets to the pot
+        game_state = [self.pot, self.ai_bet, self.recent_bet, self.small_blind, self.user_bank] # Return the game state
+        return game_state
+        #Output format: [pot, ai_bet, recent_bet, small_blind, user_bank]
+
+    def ai_small_blind(self): # Method for the AI small blind and the user big blind logic
+        self.ai_bet = random.randint(2,8) # Random small blind amount between 2 and 8, a fair and reasonable amount incase users are low on bank balance
+        self.pot += self.ai_bet # Add the AI bet to the pot
+        self.recent_bet = self.ai_bet*2 # The AI's bet is double the small blind
+        self.user_bank -= self.recent_bet # Deduct the recent bet from the user's bank
+        self.pot += self.recent_bet # Add the recent bet to the pot
+        self.visual_logic.update_log("AI placed the small blind.") # Outputs a message to the tkinter window
+        game_state = [self.pot, self.ai_bet, self.recent_bet, self.small_blind,self.user_bank] # Return the game state
+        return game_state
+        #Output format: [pot, ai_bet, recent_bet, small_blind, user_bank]
