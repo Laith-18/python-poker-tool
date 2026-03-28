@@ -19,13 +19,13 @@
     # Step 9: Reset deck for next game
     # Step 10: End game
 import tkinter as tk # Import tkinter for GUI
-from card_selector import Deck # Import Deck class for card selection
-from login_system import LoginClass # Import LoginClass for user login and registration
-from blind_determiner import BlindDecider # Import BlindDecider class for blind determination
-from strength_determiner import eval_hand # Import eval_hand function for hand evaluation
-from result import ResultDeterminer # Import ResultDeterminer class for result determination
-from betting_rounds import BettingRounds # Import BettingRounds class for betting rounds
-from visual_script import VisualLogic # Import VisualLogic class for GUI updates
+from game.card_selector import Deck # Import Deck class for card selection
+from game.login_system import LoginClass # Import LoginClass for user login and registration
+from game.blind_determiner import BlindDecider # Import BlindDecider class for blind determination
+from game.strength_determiner import eval_hand # Import eval_hand function for hand evaluation
+from game.result import ResultDeterminer # Import ResultDeterminer class for result determination
+from game.betting_rounds import BettingRounds # Import BettingRounds class for betting rounds
+from game.visual_script import VisualLogic # Import VisualLogic class for GUI updates
 
 card_deck = Deck() # Create an instance of the Deck class
 LoginClass().load_file() # Load user data from JSON file

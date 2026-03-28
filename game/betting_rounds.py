@@ -28,8 +28,8 @@
 # |                  |                  |
 # +------------------+------------------+
 
-from user_decision_making import UserDecisionMaking
-from ai_decision_making import PokerAI
+from game.user_decision_making import UserDecisionMaking
+from game.ai_decision_making import PokerAI
 import random
 
 class BettingRounds:
