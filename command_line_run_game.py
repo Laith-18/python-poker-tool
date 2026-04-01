@@ -1,0 +1,70 @@
+#i wanna play the game strictly through the command line
+
+from game.mainprogram import *
+from game.login_system import LoginClass # Import LoginClass for user login and registration
+
+
+class CommandLineGame:
+    def __init__(self, master):
+        self.master = master
+        self.username = ""
+        self.user_bank = ""
+        self.raise_amount = 0
+        self.login_system = LoginClass() # Create an instance of the LoginClass
+        self.community_deck = [] # Initialize the community deck
+
+        print("Welcome to the Command Line Poker Game!")
+
+
+    def login_loop_command_line(self):
+        """Handles the login loop. It attempts to log in the user, and if successful, starts the game."""
+        game_state = self.try_login() ## Call the try_login method to attempt login
+        username = game_state[1] # Get the username from the login method
+        user_bank = game_state[2] # Get the user bank from the login method
+        self.condition = game_state[0] # Get the condition from the login method
+        if self.condition: # If the login is successful
+            from game.mainprogram import main_game  # Import main_game function here
+            main_game(username, user_bank, self)  # Pass the instance of VisualLogic to main_game
+
+    def try_login(self): # Method to handle the login process
+        """Handles user login and starts the game if successful."""
+        username = self.username_entry.get() # Get the username from the entry
+        password = self.password_entry.get() # Get the password from the entry
+        arr = self.login_system.login(username, password)  # Reused self.login_system
+        if arr: # If the login is successful
+            self.condition = True 
+            return [self.condition,username,arr[1]] # Return the username and user bank
+            # Output format: [condition, username, user_bank]
+        else: # If the login fails
+            print("Login failed. Please check your username and password.")
+            yesorno = input("Would you like to register? (yes/no): ") # Ask if the user wants to register
+            if yesorno.lower() == "yes": # If the user wants to register
+                game_state = self.login_system.register(username, password)  # Reused self.login_system
+                if game_state == "Registration successful": 
+                    print("Registration successful!") 
+                else: 
+                    print("Registration failed")
+            else:
+                print("Please try logging in again.")
+
+    
+    def main_game_command_line(self,game_state): # Method to run the main game loop through the command line
+        """Runs the main game loop through the command line."""
+        from game.mainprogram import blind_decider, handle_small_blind_ai, handle_small_blind_user,eval_hand,betting_round_ai_first,betting_round_user_first,community_cards,result_function # Import the functions here
+
+        self.username = game_state[0]
+        self.user_bank = game_state[1]
+        self.pot = game_state[2]
+        self.user_deck = game_state[3]
+        self.ai_deck = game_state[4]
+        self.ai_strength = game_state[5]
+
+        #Determine blinds
+        small_blind = blind_decider(self.user_bank, self.pot, self) # Call the blind_decider method to determine the blinds
+        self.pot = small_blind[0] # Update the pot with the small blind
+        self.ai_bet = small_blind[1] # Get the AI bet from the blind
+        self.recent_bet = small_blind[2] # Get the recent bet from the blind
+        small_blind = small_blind[3] # Get the small blind from the blind determiner
+
+
+
