@@ -5,7 +5,14 @@ app.secret_key = "poker"
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    if request.method == "POST":
+        return "BUTTON CLICKED"
+    
+    return """
+    <form method="POST">
+        <button type="submit">Click me</button>
+    </form>
+    """
 
 if __name__ == "__main__":
     app.run(debug=True)
