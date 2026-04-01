@@ -19,6 +19,7 @@
     # Step 9: Reset deck for next game
     # Step 10: End game
 import tkinter as tk # Import tkinter for GUI
+import command_line_run_game
 from game.card_selector import Deck # Import Deck class for card selection
 from game.login_system import LoginClass # Import LoginClass for user login and registration
 from game.blind_determiner import BlindDecider # Import BlindDecider class for blind determination
@@ -93,7 +94,10 @@ def main_game(username,user_bank, visual_logic): # Main game function
     ai_deck = starting_deck() # Create the starting deck for the AI, calling the starting_deck method again
     ai_strength = eval_hand(ai_deck,com_cards=[]) # Evaluate the hand strength of the AI by calling the eval_hand method
     game_state = [username,user_bank,pot,user_deck,ai_deck,ai_strength] # Create a variable to store the game state
-    visual_logic.main_game_visual(game_state) # Call the main_game_visual method of the VisualLogic class to update the GUI
+    
+    
+    #visual_logic.main_game_visual(game_state) # Call the main_game_visual method of the VisualLogic class to update the GUI
+    command_line_run_game.main_game_command_line(game_state) # Call the main_game_command_line method of the CommandLineGame class to run the game through the command line
 
 if __name__ == "__main__": # Main function to run the game
     root = tk.Tk() # Create the main window using tkinter

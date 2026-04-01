@@ -66,5 +66,28 @@ class CommandLineGame:
         self.recent_bet = small_blind[2] # Get the recent bet from the blind
         small_blind = small_blind[3] # Get the small blind from the blind determiner
 
+        if small_blind == True:
+            game_state = handle_small_blind_user(self.user_bank, self.pot, self) # Call the handle_small_blind_user method for the user small blind logic
+            self.pot = game_state[0] # Update the pot after the small blind logic
+            self.ai_bet = self.recent_bet*2
+            self.recent_bet = self.ai_bet
+            self.small_blind = game_state[3] # Update the small blind variable
+            self.user_bank = game_state[4] # Update the user bank after the small blind logic
+        else:
+            game_state = handle_small_blind_ai(self.user_bank, self.pot, self) 
+            self.pot = game_state[0]
+            self.ai_bet = game_state[1]
+            self.recent_bet = game_state[2]
+            self.small_blind = game_state[3]
+            self.user_bank = game_state[4]
+
+        #ask if user wants tutorial mode or not
+        decision = input("Do you want to enable tutorial mode? (yes/no): ") # Ask the user if they want to enable tutorial mode
+        if decision.lower() == "yes": # If the user wants to enable tutorial mode
+            self.tutorial_mode = True
+        else:
+            self.tutorial_mode = False
+        
+        
 
 
