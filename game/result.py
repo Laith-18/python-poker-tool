@@ -17,8 +17,8 @@ class ResultDeterminer:
         return p1,p2
     
     def display_hands(self):
-        self.visual_logic.update_log("Your hand was: "+str(self.user_deck))
-        self.visual_logic.update_log("The AI's hand was: "+str(self.ai_deck))
+        print("Your hand was: "+str(self.user_deck))
+        print("The AI's hand was: "+str(self.ai_deck))
     
     def determine_winner(self,pot):
         self.pot = pot
@@ -27,16 +27,16 @@ class ResultDeterminer:
         self.display_hands()
 
         if p1 > p2:
-            self.visual_logic.update_log("You have won")
+            print("You have won")
             self.user_bank = self.user_bank + self.pot
             self.login_system.update_bank(self.username, self.user_bank)
             return "win"
         elif p1 < p2:
-            self.visual_logic.update_log("You have lost")
+            print("You have lost")
             self.login_system.update_bank(self.username, self.user_bank)
             return "lose"
         else:
-            self.visual_logic.update_log("It's a draw")
+            print("It's a draw")
             self.user_bank = self.user_bank + self.pot/2
             self.login_system.update_bank(self.username, self.user_bank)
             return "draw"

@@ -102,5 +102,5 @@ def main_game(username,user_bank): # Main game function
 
 
 if __name__ == "__main__":
-    game = CommandLineGame(None)
+    game = CommandLineGame()
     game.login_loop_command_line()

@@ -7,18 +7,18 @@ class BettingSystem:
 
     def place_bet(self): # Method for placing a bet
         while True: # Loop until a valid bet is placed
-            initial_bet = self.visual_logic.button_for_input_entry()
+            initial_bet = input("Enter your bet amount: ").strip() # Get the bet amount from the user input
             initial_bet = str(initial_bet) # Convert the input to a string
             if initial_bet.isdigit(): # Validate the input
                 initial_bet = int(initial_bet)
                 if initial_bet > self.user_bank: # Check if the bet is greater than the user's bank
-                    self.visual_logic.update_log("Bet exceeds your bank amount") # Outputs an error message
-                    
+                    print("Bet exceeds your bank amount") # Outputs an error message
+                    continue
                 else:
                     var = self.update_bank_system(initial_bet) # Call the update_bank_system method
                     break # Exit the loop
             else:
-                self.visual_logic.update_log("Invalid input. Please enter a valid bet amount.")
+                print("Invalid input. Please enter a valid bet amount.")
         return var
     
     def update_bank_system(self,initial_bet): # Method for updating the bank value

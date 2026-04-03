@@ -24,7 +24,9 @@ class UserDecisionMaking:
         Returns:
             str or list: The user's decision and updated game state info.
         """
-        decision, raise_amount = self.visual_logic.betting_buttons() # Call the betting_buttons method from the visual_logic class
+        print("Actions: fold, call, raise") # Print the available actions to the user
+        decision = input("Enter your decision: ").strip().lower() # Get the user's decision input
+        raise_amount = 0
         if decision == "fold":
                 return "fold"
         elif decision == "call":
@@ -42,8 +44,9 @@ class UserDecisionMaking:
     def raise_function(self,raise_amount): # Method for raising the bet
         while True: # Loop until a valid raise amount is entered
             try: # Try to get the raise amount from the user
+                raise_amount = int(input("Enter the amount you want to raise by: "))
                 if raise_amount > self.user_bank: # Check if the raise amount is greater than the user's bank
-                    self.visual_logic.update_log("You cannot raise by more than your bank")
+                    print("You cannot raise by more than your bank")
                     return "retry" 
                 else: # If the raise amount is valid, update the game state
                     raise_amount = raise_amount + self.recent_bet # Add the raise amount to the recent bet
