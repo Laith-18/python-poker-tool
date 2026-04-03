@@ -112,4 +112,34 @@ class CommandLineGame:
             print("The AI folded. You win the pot of: " + str(self.pot))
             sys.exit(0) #temp exit, will be replaced with proper game reset logic
 
+        #Redefine the game state variables
+        self.pot = game_state[0]
+        self.user_bank = game_state[1]
+        self.recent_bet = game_state[2]
+        
+        self.community_deck = community_cards(community_deck=self.community_deck, x=3)
+
+        print(f"Community cards: {self.community_deck}") # Show the user the community cards
+
+        # Check if the tutorial mode is enabled, and if so call the action_recommendation method
+        if self.tutorial_mode == True:
+            self.action_recommendation()
+        
+        #second round of betting
+        self.ai_strength = eval_hand(hand1=self.ai_deck, com_cards=self.community_deck)
+        if small_blind == True:
+            game_state = betting_round_user_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet, self) # Pass the instance of VisualLogic to betting_round_user_first in mainprogram.py
+        else:
+            game_state = betting_round_ai_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet, self) # Pass the instance of VisualLogic to betting_round_ai_first in mainprogram.py
+
+        if game_state == "fold":
+            print("You folded. Game over!")
+            sys.exit(0) #temp exit, will be replaced with proper game reset logic
+        elif game_state == "ai_folded":
+            print("The AI folded. You win the pot of: " + str(self.pot))
+            sys.exit(0) #temp exit, will be replaced with proper game reset logic
+        
+        self.pot = game_state[0]
+        self.user_bank = game_state[1]
+        self.recent_bet = game_state[2]
 
