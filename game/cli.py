@@ -23,7 +23,7 @@ class CommandLineGame:
         self.condition = game_state[0] # Get the condition from the login method
         if self.condition: # If the login is successful
             from game.mainprogram import main_game  # Import main_game function here
-            main_game(username, user_bank, self)  # Pass the instance of VisualLogic to main_game
+            main_game(username, user_bank)  # Pass the instance of VisualLogic to main_game
 
     def try_login(self): # Method to handle the login process
         """Handles user login and starts the game if successful."""
