@@ -47,7 +47,19 @@ class CommandLineGame:
             else:
                 print("Please try logging in again.")
 
+
+
+    def action_recommendation(self): # Method to provide action recommendations based on the user's hand strength
+        from game.mainprogram import eval_hand # Import eval_hand function here
+        self.user_hand_strength = eval_hand(hand1=self.user_deck, com_cards=self.community_deck) # Evaluate the user's hand strength
+        if self.user_hand_strength > 5: # Check if the user's hand strength is greater than 5
+            print("You have a strong hand, consider raising.")
+        elif self.user_hand_strength < 1: # Check if the user's hand strength is less than 1
+            print("You have a weak hand, consider folding.")
+        else: # Check if the user's hand strength is between 1 and 5
+            print("You have a decent hand, consider calling.")
     
+
     def main_game_command_line(self,game_state): # Method to run the main game loop through the command line
         """Runs the main game loop through the command line."""
         from game.mainprogram import blind_decider, handle_small_blind_ai, handle_small_blind_user,eval_hand,betting_round_ai_first,betting_round_user_first,community_cards,result_function # Import the functions here
@@ -164,5 +176,40 @@ class CommandLineGame:
         self.pot = game_state[0]
         self.user_bank = game_state[1]
         self.recent_bet = game_state[2]
-        
 
+        #the river is revealed
+        self.community_deck = community_cards(community_deck=self.community_deck, x=1) # Call the community_cards method to add the river card to the community deck
+        
+        self.user_hand_strength = eval_hand(hand1=self.user_deck, com_cards=self.community_deck) # Re-evaluate the user's hand strength after the river card is revealed
+        if self.tutorial_mode == True:
+            self.action_recommendation() # Call the action_recommendation method to give the user a recommendation based on their hand strength
+        
+        self.ai_strength = eval_hand(hand1=self.ai_deck, com_cards=self.community_deck) # Re-evaluate the AI's hand strength after the river card is revealed
+        if small_blind == True:
+            game_state = betting_round_user_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet, self) # Pass the instance of VisualLogic to betting_round_user_first in mainprogram.py
+        else:
+            game_state = betting_round_ai_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet, self) # Pass the instance of VisualLogic to betting_round_ai_first in mainprogram.py
+        
+        if game_state == "fold":
+            print("You folded. Game over!")
+            sys.exit(0) #temp exit, will be replaced with proper game reset logic
+        elif game_state == "ai_folded":
+            print("The AI folded. You win the pot of: " + str(self.pot))
+            sys.exit(0) #temp exit, will be replaced with proper game reset logic
+        
+        self.pot = game_state[0]
+        self.user_bank = game_state[1]
+        self.recent_bet = game_state[2]
+
+        # Show the final results of the game
+        result = result_function(self.user_deck, self.ai_deck, self.community_deck) # Call the result_function to determine the winner of the game
+        print(f"Your hand: {self.user_deck}, Hand Strength: {self.user_hand_strength}") # Show the user their hand and hand strength
+        print(f"AI's hand: {self.ai_deck}, Hand Strength: {self.ai_strength}") # Show the user the AI's hand and hand strength
+        print(f"Community cards: {self.community_deck}") # Show the user the community cards
+        print(f"Result: {result}") # Show the user the result of the game
+        if result == "User wins":
+            print(f"You win the pot of: {self.pot}")
+        elif result == "AI wins":
+            print(f"The AI wins the pot of: {self.pot}")
+        else:
+            print("It's a tie! The pot is split.")
