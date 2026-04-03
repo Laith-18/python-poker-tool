@@ -18,15 +18,16 @@
     # Step 8: Save user data to JSON file
     # Step 9: Reset deck for next game
     # Step 10: End game
-import tkinter as tk # Import tkinter for GUI
-import command_line_run_game
-from game.card_selector import Deck # Import Deck class for card selection
-from game.login_system import LoginClass # Import LoginClass for user login and registration
-from game.blind_determiner import BlindDecider # Import BlindDecider class for blind determination
-from game.strength_determiner import eval_hand # Import eval_hand function for hand evaluation
-from game.result import ResultDeterminer # Import ResultDeterminer class for result determination
-from game.betting_rounds import BettingRounds # Import BettingRounds class for betting rounds
-from game.visual_script import VisualLogic # Import VisualLogic class for GUI updates
+
+
+from card_selector import Deck # Import Deck class for card selection
+from login_system import LoginClass # Import LoginClass for user login and registration
+from blind_determiner import BlindDecider # Import BlindDecider class for blind determination
+from strength_determiner import eval_hand # Import eval_hand function for hand evaluation
+from result import ResultDeterminer # Import ResultDeterminer class for result determination
+from betting_rounds import BettingRounds # Import BettingRounds class for betting rounds
+from cli import CommandLineGame # Import CommandLineGame class for command
+
 
 card_deck = Deck() # Create an instance of the Deck class
 LoginClass().load_file() # Load user data from JSON file
@@ -88,7 +89,7 @@ def community_cards(community_deck,x): # Method to create the community cards
     return community_deck
     #Output: [[value, suit], [value, suit], [value, suit], [value, suit], [value, suit]], max 5 cards
 
-def main_game(username,user_bank, visual_logic): # Main game function
+def main_game(username,user_bank): # Main game function
     pot = 0 # Initialize the pot to 0
     user_deck = starting_deck() # Create the starting deck for the user by calling the starting_deck method
     ai_deck = starting_deck() # Create the starting deck for the AI, calling the starting_deck method again
@@ -99,7 +100,6 @@ def main_game(username,user_bank, visual_logic): # Main game function
     #visual_logic.main_game_visual(game_state) # Call the main_game_visual method of the VisualLogic class to update the GUI
     command_line_run_game.main_game_command_line(game_state) # Call the main_game_command_line method of the CommandLineGame class to run the game through the command line
 
-if __name__ == "__main__": # Main function to run the game
-    root = tk.Tk() # Create the main window using tkinter
-    VisualLogic(root) # Create an instance of the VisualLogic class
-    root.mainloop() # Run the main loop of the tkinter window
+
+if __name__ == "__main__":
+    CommandLineGame().main_menu_command_line(master) # Call the main_menu_command_line method of the CommandLineGame class to run the main menu through the command line

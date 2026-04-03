@@ -1,7 +1,6 @@
 #i wanna play the game strictly through the command line
 
-from game.mainprogram import *
-from game.login_system import LoginClass # Import LoginClass for user login and registration
+from login_system import LoginClass # Import LoginClass for user login and registration
 import sys
 
 class CommandLineGame:

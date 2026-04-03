@@ -1,5 +1,5 @@
 import random
-from game.bank_system import BettingSystem
+from bank_system import BettingSystem
 
 class BlindDecider:
     def __init__(self, user_bank, pot, visual_logic): # Constructor
