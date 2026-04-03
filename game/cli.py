@@ -17,20 +17,24 @@ class CommandLineGame:
 
     def login_loop_command_line(self):
         """Handles the login loop. It attempts to log in the user, and if successful, starts the game."""
-        game_state = self.try_login() ## Call the try_login method to attempt login
+        while True: # Loop until the user successfully logs in
+            game_state = self.try_login() ## Call the try_login method to attempt login
+            if game_state:
+                break
+            print("Login unsuccessful. Please try again.\n") # If login fails, prompt the user to try again
         username = game_state[1] # Get the username from the login method
         user_bank = game_state[2] # Get the user bank from the login method
         self.condition = game_state[0] # Get the condition from the login method
         if self.condition: # If the login is successful
             from game.mainprogram import main_game  # Import main_game function here
-            main_game(username, user_bank)  # Pass the instance of VisualLogic to main_game
+            main_game(username, user_bank)  # Pass the instance of VisualLogic to main_game in mainprogram.py to run the main game loop through the command line
 
     def try_login(self): # Method to handle the login process
         """Handles user login and starts the game if successful."""
 
 
-        username = input("Enter your username: ").strip # Get the username from the user input
-        password = input("Enter your password: ").strip # Get the password from the user input
+        username = input("Enter your username: ").strip() # Get the username from the user input
+        password = input("Enter your password: ").strip() # Get the password from the user input
 
 
 
@@ -43,8 +47,8 @@ class CommandLineGame:
             # Output format: [condition, username, user_bank]
         else: # If the login fails
             print("Login failed. Please check your username and password.")
-            yesorno = input("Would you like to register? (yes/no): ") # Ask if the user wants to register
-            if yesorno.lower() == "yes": # If the user wants to register
+            yes_or_no = input("Would you like to register? (yes/no): ") # Ask if the user wants to register
+            if yes_or_no.lower() == "yes": # If the user wants to register
                 game_state = self.login_system.register(username, password)  # Reused self.login_system
                 if game_state == "Registration successful": 
                     print("Registration successful!") 
@@ -210,7 +214,7 @@ class CommandLineGame:
         self.recent_bet = game_state[2]
 
         # Show the final results of the game
-        result = result_function(self.user_deck, self.ai_deck, self.community_deck) # Call the result_function to determine the winner of the game
+        result = result_function(self.user_deck, self.ai_deck, self.community_deck, self.pot, self.username, self.user_bank, self)        
         print(f"Your hand: {self.user_deck}, Hand Strength: {self.user_hand_strength}") # Show the user their hand and hand strength
         print(f"AI's hand: {self.ai_deck}, Hand Strength: {self.ai_strength}") # Show the user the AI's hand and hand strength
         print(f"Community cards: {self.community_deck}") # Show the user the community cards
