@@ -97,9 +97,10 @@ def main_game(username,user_bank): # Main game function
     game_state = [username,user_bank,pot,user_deck,ai_deck,ai_strength] # Create a variable to store the game state
     
     
-    #visual_logic.main_game_visual(game_state) # Call the main_game_visual method of the VisualLogic class to update the GUI
-    command_line_run_game.main_game_command_line(game_state) # Call the main_game_command_line method of the CommandLineGame class to run the game through the command line
+    cli_game = CommandLineGame(None)
+    cli_game.main_game_command_line(game_state)
 
 
 if __name__ == "__main__":
-    CommandLineGame().main_menu_command_line(master) # Call the main_menu_command_line method of the CommandLineGame class to run the main menu through the command line
+    game = CommandLineGame(None)
+    game.login_loop_command_line()

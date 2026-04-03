@@ -109,18 +109,20 @@ class CommandLineGame:
         #Preflop
         print(f"Your hand: {self.user_deck}") # Show the user their hand
         print(f"AI's hand: {self.ai_deck}") # Show the user the AI's hand (for testing purposes, can be removed in production)
+
+
         if self.tutorial_mode:
             self.user_hand_strength = eval_hand(self.user_deck, self.community_deck) # Evaluate the user's hand strength
-        if self.user_hand_strength > 5: # Check if the user's hand strength is greater than 5
-            print("You have a strong hand, consider raising.\n")
-        elif self.user_hand_strength < 1: # Check if the user's hand strength is less than 1
-            print("You have a weak hand, consider folding.\n")
-        else: # Check if the user's hand strength is between 1 and 5
-            print("You have a decent hand, consider calling.\n")
-        if small_blind == True: # If the user is the small blind
-            game_state = betting_round_user_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet, self) # Pass the instance of VisualLogic to betting_round_user_first in mainprogram.py
-        else:
-            game_state = betting_round_ai_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet, self) # Pass the instance of VisualLogic to betting_round_ai_first in mainprogram.py
+            if self.user_hand_strength > 5: # Check if the user's hand strength is greater than 5
+                print("You have a strong hand, consider raising.\n")
+            elif self.user_hand_strength < 1: # Check if the user's hand strength is less than 1
+                print("You have a weak hand, consider folding.\n")
+            else: # Check if the user's hand strength is between 1 and 5
+                print("You have a decent hand, consider calling.\n")
+            if small_blind == True: # If the user is the small blind
+                game_state = betting_round_user_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet, self) # Pass the instance of VisualLogic to betting_round_user_first in mainprogram.py
+            else:
+                game_state = betting_round_ai_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet, self) # Pass the instance of VisualLogic to betting_round_ai_first in mainprogram.py
 
 
         if game_state == "fold":
