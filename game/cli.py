@@ -27,9 +27,16 @@ class CommandLineGame:
 
     def try_login(self): # Method to handle the login process
         """Handles user login and starts the game if successful."""
-        username = self.username_entry.get() # Get the username from the entry
-        password = self.password_entry.get() # Get the password from the entry
+
+
+        username = input("Enter your username: ").strip # Get the username from the user input
+        password = input("Enter your password: ").strip # Get the password from the user input
+
+
+
         arr = self.login_system.login(username, password)  # Reused self.login_system
+
+
         if arr: # If the login is successful
             self.condition = True 
             return [self.condition,username,arr[1]] # Return the username and user bank
