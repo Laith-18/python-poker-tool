@@ -30,13 +30,16 @@ class ResultDeterminer:
             self.visual_logic.update_log("You have won")
             self.user_bank = self.user_bank + self.pot
             self.login_system.update_bank(self.username, self.user_bank)
+            return "win"
         elif p1 < p2:
             self.visual_logic.update_log("You have lost")
             self.login_system.update_bank(self.username, self.user_bank)
+            return "lose"
         else:
             self.visual_logic.update_log("It's a draw")
             self.user_bank = self.user_bank + self.pot/2
             self.login_system.update_bank(self.username, self.user_bank)
+            return "draw"
 
     
 
