@@ -15,6 +15,8 @@ class BlindDecider:
             self.small_blind = True # The user is the small blind
         else:
             self.small_blind = False # The user is not the small blind, hence the AI is the small blind
+        self.ai_bet = 0
+        self.recent_bet = 0
         return [self.pot, self.ai_bet, self.recent_bet, self.small_blind]
         #Output format: [pot, ai_bet, recent_bet, small_blind]
 
@@ -23,7 +25,8 @@ class BlindDecider:
         betting_system = BettingSystem(self.user_bank) # Create an instance of the BettingSystem class
         result = betting_system.place_bet() # Call the place_bet method
         self.user_bank, self.recent_bet = result # Unpack the result
-        self.pot += self.recent_bet + (self.recent_bet*2) # Add the recent bets to the pot
+        big_blind = self.recent_bet * 2
+        self.pot += self.recent_bet + big_blind # Add the recent bets to the pot
         game_state = [self.pot, self.ai_bet, self.recent_bet, self.small_blind, self.user_bank] # Return the game state
         return game_state
         #Output format: [pot, ai_bet, recent_bet, small_blind, user_bank]
