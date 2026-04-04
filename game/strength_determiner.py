@@ -27,6 +27,35 @@ def eval_hand(hand1,com_cards): # Function to evaluate the strength of a poker h
     # Determine if there is a flush (5 or more cards of the same suit)
     flush1 = max(suits_counts1.values()) >= 5
 
+
+    flush_suit = max(suits_counts1, key=suits_counts1.get) if flush1 else None # Get the suit that has the most cards
+    flush_cards = sorted(set(rank_to_value(c[0]) for c in hand1 if c[1] == flush_suit), reverse=True) if flush1 else [] # Get the ranks of the cards that are of the flush suit, sorted in descending order
+
+    if flush1 and 14 in [rank_to_value(c[0]) for c in hand1 if c[1] == flush_suit]: # Check for Ace-high straight flush
+        flush_cards_with_low_ace = sorted(flush_cards + [1], reverse=True) # Add Ace as low (value 1) for straight flush evaluation
+    else:
+        flush_cards_with_low_ace = flush_cards # Use the original flush cards if no Ace is present
+    
+    straight_flush = False
+    if len(flush_cards_with_low_ace) >= 5: # Check for straight flush
+        for i in range(len(flush_cards_with_low_ace) - 4):
+            if flush_cards_with_low_ace[i:i+5] == list(range(flush_cards_with_low_ace[i], flush_cards_with_low_ace[i]-5, -1)):
+                straight_flush = True
+                break
+    
+    rank_Set1 = set(ranks1) # Convert the list of ranks to a set to remove duplicates
+    if 14 in rank_set1:
+        rank_set1 = rank_set1 | {1} # Add Ace as low (value 1) for straight evaluation if Ace is present
+    rank_list1 = sorted(rank_set1, reverse=True) # Sort the ranks in descending order
+
+    straight1 = False
+    if len(rank_list1) >= 5: # Check for straight
+        for i in range(len(rank_list1) - 4):
+            if rank_list1[i:i+5] == list(range(rank_list1[i], rank_list1[i]-5, -1)):
+                straight1 = True
+                break
+
+
     # Determine if there is a straight (5 consecutive cards)
     rank_set1 = set(ranks1) # Convert the list of ranks to a set to remove duplicates
     rank_list1 = sorted(rank_set1, reverse=True) # Sort the ranks in descending order
@@ -38,7 +67,7 @@ def eval_hand(hand1,com_cards): # Function to evaluate the strength of a poker h
     #checks if the 5 cards array pattern matches the pattern of the decending list, if so it is a straight   
 
     # Determine the strength of the hand
-    if straight1 and flush1:
+    if straight_flush:
         strength = 9
     elif 4 in counts1:
         strength = 8
@@ -55,7 +84,7 @@ def eval_hand(hand1,com_cards): # Function to evaluate the strength of a poker h
     elif 2 in counts1:
         strength = 2
     else:
-        strength = 0
+        strength = 1
     return strength
     # Output: strength value from 0 to 9
     # The strength value is based on standard poker rankings:
