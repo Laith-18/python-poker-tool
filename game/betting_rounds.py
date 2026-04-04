@@ -52,6 +52,7 @@ class BettingRounds:
                 #self.visual_logic.update_log(f"The pot is now: {self.pot}")
                 #self.visual_logic.update_pot(pot=self.pot)
                 raise_amount = 0
+                raise_amount_u = 0
             elif temp[0] == "raise":
                 raise_amount = int(round(temp[1]))
                 #self.visual_logic.update_log(f"The AI has raised by: {raise_amount}")

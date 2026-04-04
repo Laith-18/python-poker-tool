@@ -2,5 +2,13 @@
     "Pank": {
         "password": "838167a09883961a46b2375bf75a9f2a10f84beb50603f112aa8c35608d08953",
         "chips": 500
+    },
+    "Panko": {
+        "password": "b2c980df5f69ce23f5db339c24ed80d57945ef0d70a4379caa04580e26ffab1a",
+        "chips": 500
+    },
+    "Sushi": {
+        "password": "1ab5dcb902f9b5040def3993ea70383f2de14998b79ce88b942222f7d9f6bbb0",
+        "chips": 507
     }
 }

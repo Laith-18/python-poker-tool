@@ -170,6 +170,10 @@ class CommandLineGame:
         #the turn is revealed
         self.community_deck = community_cards(community_deck=self.community_deck, x=1) # Call the community_cards method to add the turn card to the community deck
 
+        print(f"Community cards: {self.community_deck}") # Show the user the community cards
+
+
+
         self.ai_strength = eval_hand(hand1=self.ai_deck, com_cards=self.community_deck) # Re-evaluate the AI's hand strength after the turn card is revealed
         if small_blind == True:
             game_state = betting_round_user_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet) # Pass the instance of VisualLogic to betting_round_user_first in mainprogram.py
@@ -191,7 +195,11 @@ class CommandLineGame:
 
         #the river is revealed
         self.community_deck = community_cards(community_deck=self.community_deck, x=1) # Call the community_cards method to add the river card to the community deck
-        
+        print(f"Community cards: {self.community_deck}") # Show the user the community cards
+
+
+
+
         self.user_hand_strength = eval_hand(hand1=self.user_deck, com_cards=self.community_deck) # Re-evaluate the user's hand strength after the river card is revealed
         if self.tutorial_mode == True:
             self.action_recommendation() # Call the action_recommendation method to give the user a recommendation based on their hand strength
