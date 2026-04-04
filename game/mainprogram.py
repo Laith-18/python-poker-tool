@@ -32,20 +32,20 @@ from cli import CommandLineGame # Import CommandLineGame class for command
 card_deck = Deck() # Create an instance of the Deck class
 LoginClass().load_file() # Load user data from JSON file
 
-def blind_decider(user_bank, pot, visual_logic): # Method to decide the blind
-    blind_decider = BlindDecider(user_bank, pot, visual_logic) # Create an instance of the BlindDecider class
+def blind_decider(user_bank, pot): # Method to decide the blind
+    blind_decider = BlindDecider(user_bank, pot) # Create an instance of the BlindDecider class
     game_state = blind_decider.decide_blind() # Call the decide_blind method
     return game_state
     # Output format: [pot, ai_bet, recent_bet, small_blind]
 
-def handle_small_blind_user(user_bank, pot, visual_logic): # Method for the user small blind and the AI big blind logic
-    blind_decider = BlindDecider(user_bank, pot, visual_logic) # Create an instance of the BlindDecider class
+def handle_small_blind_user(user_bank, pot): # Method for the user small blind and the AI big blind logic
+    blind_decider = BlindDecider(user_bank, pot) # Create an instance of the BlindDecider class
     game_state = blind_decider.small_blind_user() ## Call the small_blind_user method
     return game_state 
     # Output format: [pot, ai_bet, recent_bet, small_blind, user_bank]
 
-def handle_small_blind_ai(user_bank, pot, visual_logic): # Method for the AI small blind and the user big blind logic
-    blind_decider = BlindDecider(user_bank, pot, visual_logic) # Create an instance of the BlindDecider class
+def handle_small_blind_ai(user_bank, pot): # Method for the AI small blind and the user big blind logic
+    blind_decider = BlindDecider(user_bank, pot) # Create an instance of the BlindDecider class
     game_state = blind_decider.ai_small_blind() # Call the ai_small_blind method
     return game_state
 
@@ -60,14 +60,14 @@ def result_function(user_deck,ai_deck,community_deck,pot,username,user_bank): # 
     result = ResultDeterminer(user_deck,ai_deck,community_deck,pot,username,user_bank) # Create an instance of the ResultDeterminer class
     result.determine_winner(pot) # Call the determine_winner method
 
-def betting_round_ai_first(ai_strength, pot, user_bank, recent_bet, visual_logic): # Method for the AI first betting round
-    betting_round = BettingRounds(ai_strength, pot, user_bank, recent_bet, visual_logic) ## Create an instance of the BettingRounds class
+def betting_round_ai_first(ai_strength, pot, user_bank, recent_bet): # Method for the AI first betting round
+    betting_round = BettingRounds(ai_strength, pot, user_bank, recent_bet) ## Create an instance of the BettingRounds class
     game_state = betting_round.ai_first() # Call the ai_first method
     return game_state
     # Output format: [pot, user_bank, recent_bet]
 
-def betting_round_user_first(ai_strength, pot, user_bank, recent_bet, visual_logic): # Method for the user first betting round
-    betting_round = BettingRounds(ai_strength, pot, user_bank, recent_bet, visual_logic) # Create an instance of the BettingRounds class
+def betting_round_user_first(ai_strength, pot, user_bank, recent_bet): # Method for the user first betting round
+    betting_round = BettingRounds(ai_strength, pot, user_bank, recent_bet) # Create an instance of the BettingRounds class
     game_state = betting_round.user_first() # Call the user_first method
     return game_state
     # Output format: [pot, user_bank, recent_bet]
@@ -102,5 +102,5 @@ def main_game(username,user_bank): # Main game function
 
 
 if __name__ == "__main__":
-    game = CommandLineGame()
+    game = CommandLineGame(master=None)
     game.login_loop_command_line()

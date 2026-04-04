@@ -26,7 +26,7 @@ class CommandLineGame:
         user_bank = game_state[2] # Get the user bank from the login method
         self.condition = game_state[0] # Get the condition from the login method
         if self.condition: # If the login is successful
-            from game.mainprogram import main_game  # Import main_game function here
+            from mainprogram import main_game  # Import main_game function here
             main_game(username, user_bank)  # Pass the instance of VisualLogic to main_game in mainprogram.py to run the main game loop through the command line
 
     def try_login(self): # Method to handle the login process
@@ -60,7 +60,7 @@ class CommandLineGame:
 
 
     def action_recommendation(self): # Method to provide action recommendations based on the user's hand strength
-        from game.mainprogram import eval_hand # Import eval_hand function here
+        from mainprogram import eval_hand # Import eval_hand function here
         self.user_hand_strength = eval_hand(hand1=self.user_deck, com_cards=self.community_deck) # Evaluate the user's hand strength
         if self.user_hand_strength > 5: # Check if the user's hand strength is greater than 5
             print("You have a strong hand, consider raising.")
@@ -72,7 +72,7 @@ class CommandLineGame:
 
     def main_game_command_line(self,game_state): # Method to run the main game loop through the command line
         """Runs the main game loop through the command line."""
-        from game.mainprogram import blind_decider, handle_small_blind_ai, handle_small_blind_user,eval_hand,betting_round_ai_first,betting_round_user_first,community_cards,result_function # Import the functions here
+        from mainprogram import blind_decider, handle_small_blind_ai, handle_small_blind_user,eval_hand,betting_round_ai_first,betting_round_user_first,community_cards,result_function # Import the functions here
 
         self.username = game_state[0]
         self.user_bank = game_state[1]
