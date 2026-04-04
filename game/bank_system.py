@@ -3,11 +3,11 @@ class BettingSystem:
     def __init__(self,user_bank): # Constructor
         self.user_bank = user_bank
         self.current_bet = 0
+        self.recent_bet = 0
 
     def place_bet(self): # Method for placing a bet
         while True: # Loop until a valid bet is placed
             initial_bet = input("Enter your bet amount: ").strip() # Get the bet amount from the user input
-            initial_bet = str(initial_bet) # Convert the input to a string
             if initial_bet.isdigit(): # Validate the input
                 initial_bet = int(initial_bet)
                 if initial_bet > self.user_bank: # Check if the bet is greater than the user's bank
