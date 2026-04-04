@@ -51,7 +51,12 @@ class CommandLineGame:
             if yes_or_no.lower() == "yes": # If the user wants to register
                 game_state = self.login_system.register(username, password)  # Reused self.login_system
                 if game_state == "Registration successful": 
-                    print("Registration successful!") 
+                    print("Registration successful!")
+                    arr = self.login_system.login(username, password)  # Log in the user after successful registration
+                    if arr:
+                        self.condition = True 
+                        return [self.condition,username,arr[1]] # Return the username and user bank
+                        # Output format: [condition, username, user_bank]
                 else: 
                     print("Registration failed")
             else:
@@ -116,18 +121,13 @@ class CommandLineGame:
 
 
         if self.tutorial_mode:
-            self.user_hand_strength = eval_hand(self.user_deck, self.community_deck) # Evaluate the user's hand strength
-            if self.user_hand_strength > 5: # Check if the user's hand strength is greater than 5
-                print("You have a strong hand, consider raising.\n")
-            elif self.user_hand_strength < 1: # Check if the user's hand strength is less than 1
-                print("You have a weak hand, consider folding.\n")
-            else: # Check if the user's hand strength is between 1 and 5
-                print("You have a decent hand, consider calling.\n")
-            if small_blind == True: # If the user is the small blind
-                game_state = betting_round_user_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet) # Pass the instance of VisualLogic to betting_round_user_first in mainprogram.py
-            else:
-                game_state = betting_round_ai_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet) # Pass the instance of VisualLogic to betting_round_ai_first in mainprogram.py
+            self.action_recommendation() # Call the action_recommendation method to give the user a recommendation based on their hand strength
 
+
+        if small_blind == True:
+            game_state = betting_round_user_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet) # Pass the instance of VisualLogic to betting_round_user_first in mainprogram.py
+        else:
+            game_state = betting_round_ai_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet) # Pass the instance of VisualLogic to betting_round_ai_first in mainprogram.py
 
         if game_state == "fold":
             print("You folded. Game over!")
@@ -172,9 +172,9 @@ class CommandLineGame:
 
         self.ai_strength = eval_hand(hand1=self.ai_deck, com_cards=self.community_deck) # Re-evaluate the AI's hand strength after the turn card is revealed
         if small_blind == True:
-            game_state = betting_round_user_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet, self) # Pass the instance of VisualLogic to betting_round_user_first in mainprogram.py
+            game_state = betting_round_user_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet) # Pass the instance of VisualLogic to betting_round_user_first in mainprogram.py
         else:
-            game_state = betting_round_ai_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet, self) # Pass the instance of VisualLogic to betting_round_ai_first in mainprogram.py
+            game_state = betting_round_ai_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet) # Pass the instance of VisualLogic to betting_round_ai_first in mainprogram.py
 
         if game_state == "fold":
             print("You folded. Game over!")
@@ -214,14 +214,14 @@ class CommandLineGame:
         self.recent_bet = game_state[2]
 
         # Show the final results of the game
-        result = result_function(self.user_deck, self.ai_deck, self.community_deck, self.pot, self.username, self.user_bank, self)        
+        result = result_function(self.user_deck, self.ai_deck, self.community_deck, self.pot, self.username, self.user_bank)        
         print(f"Your hand: {self.user_deck}, Hand Strength: {self.user_hand_strength}") # Show the user their hand and hand strength
         print(f"AI's hand: {self.ai_deck}, Hand Strength: {self.ai_strength}") # Show the user the AI's hand and hand strength
         print(f"Community cards: {self.community_deck}") # Show the user the community cards
         print(f"Result: {result}") # Show the user the result of the game
-        if result == "User wins":
+        if result == "win":
             print(f"You win the pot of: {self.pot}")
-        elif result == "AI wins":
+        elif result == "lose":
             print(f"The AI wins the pot of: {self.pot}")
         else:
             print("It's a tie! The pot is split.")

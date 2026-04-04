@@ -43,7 +43,7 @@ def eval_hand(hand1,com_cards): # Function to evaluate the strength of a poker h
                 straight_flush = True
                 break
     
-    rank_Set1 = set(ranks1) # Convert the list of ranks to a set to remove duplicates
+    rank_set1 = set(ranks1) # Convert the list of ranks to a set to remove duplicates
     if 14 in rank_set1:
         rank_set1 = rank_set1 | {1} # Add Ace as low (value 1) for straight evaluation if Ace is present
     rank_list1 = sorted(rank_set1, reverse=True) # Sort the ranks in descending order
@@ -54,17 +54,6 @@ def eval_hand(hand1,com_cards): # Function to evaluate the strength of a poker h
             if rank_list1[i:i+5] == list(range(rank_list1[i], rank_list1[i]-5, -1)):
                 straight1 = True
                 break
-
-
-    # Determine if there is a straight (5 consecutive cards)
-    rank_set1 = set(ranks1) # Convert the list of ranks to a set to remove duplicates
-    rank_list1 = sorted(rank_set1, reverse=True) # Sort the ranks in descending order
-    straight1 = any(rank_list1[i:i+5] == list(range(rank_list1[i], rank_list1[i]-5, -1)) for i in range(len(rank_list1) - 4))
-    #any function returns true if any element in the iterable statement is true, otherwise it returns false
-    #for i in range(len(rank_list1)-4) iterates through rank_list1, and the -4 ensures that there is not a index error, as there are 5 cards
-    #rank_list[i:i+5] checks elements to see if they form a straight, starting at index i.
-    #list(range(rank_list1[i], rank_)list[i]-5, -1), gens a decending list of numbers, pattern for a straight
-    #checks if the 5 cards array pattern matches the pattern of the decending list, if so it is a straight   
 
     # Determine the strength of the hand
     if straight_flush:

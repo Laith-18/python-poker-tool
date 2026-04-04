@@ -56,9 +56,11 @@ def card_selector(): # Method to select a card from the deck
     except ValueError: # If the deck is empty, raise an error
         print("All cards have been used") 
     
-def result_function(user_deck,ai_deck,community_deck,pot,username,user_bank): # Method to determine the result of the game
-    result = ResultDeterminer(user_deck,ai_deck,community_deck,pot,username,user_bank) # Create an instance of the ResultDeterminer class
-    result.determine_winner(pot) # Call the determine_winner method
+def result_function(user_deck, ai_deck, community_deck, pot, username, user_bank):
+    login = LoginClass()
+    login.load_file()
+    r = ResultDeterminer(user_deck, ai_deck, community_deck, pot, username, user_bank, login_system=login)
+    return r.determine_winner(pot)
 
 def betting_round_ai_first(ai_strength, pot, user_bank, recent_bet): # Method for the AI first betting round
     betting_round = BettingRounds(ai_strength, pot, user_bank, recent_bet) ## Create an instance of the BettingRounds class

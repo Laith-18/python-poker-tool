@@ -1,14 +1,13 @@
 from strength_determiner import eval_hand
 from login_system import LoginClass
 class ResultDeterminer:
-    def __init__(self,user_deck,ai_deck,community_deck,pot,username,user_bank,visual_logic,login_system):
+    def __init__(self,user_deck,ai_deck,community_deck,pot,username,user_bank,login_system):
         self.user_deck = user_deck
         self.ai_deck = ai_deck
         self.community_deck = community_deck
         self.pot = pot
         self.username = username
         self.user_bank = user_bank
-        self.visual_logic = visual_logic
         self.login_system = login_system
 
     def evaluate_hands(self):
