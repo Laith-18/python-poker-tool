@@ -20,7 +20,7 @@ class BlindDecider:
 
     def small_blind_user(self): # Method for the user small blind and the AI big blind logic
         print("You are the small blind. Please place your bet.") # Outputs a message to the tkinter window
-        betting_system = BettingSystem(self.user_bank, visual_logic=self.visual_logic) # Create an instance of the BettingSystem class
+        betting_system = BettingSystem(self.user_bank) # Create an instance of the BettingSystem class
         result = betting_system.place_bet() # Call the place_bet method
         self.user_bank, self.recent_bet = result # Unpack the result
         self.pot += self.recent_bet + (self.recent_bet*2) # Add the recent bets to the pot

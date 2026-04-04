@@ -82,21 +82,21 @@ class CommandLineGame:
         self.ai_strength = game_state[5]
 
         #Determine blinds
-        small_blind = blind_decider(self.user_bank, self.pot, self) # Call the blind_decider method to determine the blinds
+        small_blind = blind_decider(self.user_bank, self.pot) # Call the blind_decider method to determine the blinds
         self.pot = small_blind[0] # Update the pot with the small blind
         self.ai_bet = small_blind[1] # Get the AI bet from the blind
         self.recent_bet = small_blind[2] # Get the recent bet from the blind
         small_blind = small_blind[3] # Get the small blind from the blind determiner
 
         if small_blind == True:
-            game_state = handle_small_blind_user(self.user_bank, self.pot, self) # Call the handle_small_blind_user method for the user small blind logic
+            game_state = handle_small_blind_user(self.user_bank, self.pot) # Call the handle_small_blind_user method for the user small blind logic
             self.pot = game_state[0] # Update the pot after the small blind logic
-            self.ai_bet = self.recent_bet*2
+            self.ai_bet = int(self.recent_bet) *2
             self.recent_bet = self.ai_bet
             self.small_blind = game_state[3] # Update the small blind variable
             self.user_bank = game_state[4] # Update the user bank after the small blind logic
         else:
-            game_state = handle_small_blind_ai(self.user_bank, self.pot, self) 
+            game_state = handle_small_blind_ai(self.user_bank, self.pot) # Call the handle_small_blind_ai method for the AI small blind logic
             self.pot = game_state[0]
             self.ai_bet = game_state[1]
             self.recent_bet = game_state[2]
@@ -124,9 +124,9 @@ class CommandLineGame:
             else: # Check if the user's hand strength is between 1 and 5
                 print("You have a decent hand, consider calling.\n")
             if small_blind == True: # If the user is the small blind
-                game_state = betting_round_user_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet, self) # Pass the instance of VisualLogic to betting_round_user_first in mainprogram.py
+                game_state = betting_round_user_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet) # Pass the instance of VisualLogic to betting_round_user_first in mainprogram.py
             else:
-                game_state = betting_round_ai_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet, self) # Pass the instance of VisualLogic to betting_round_ai_first in mainprogram.py
+                game_state = betting_round_ai_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet) # Pass the instance of VisualLogic to betting_round_ai_first in mainprogram.py
 
 
         if game_state == "fold":
@@ -152,9 +152,9 @@ class CommandLineGame:
         #second round of betting
         self.ai_strength = eval_hand(hand1=self.ai_deck, com_cards=self.community_deck)
         if small_blind == True:
-            game_state = betting_round_user_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet, self) # Pass the instance of VisualLogic to betting_round_user_first in mainprogram.py
+            game_state = betting_round_user_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet) # Pass the instance of VisualLogic to betting_round_user_first in mainprogram.py
         else:
-            game_state = betting_round_ai_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet, self) # Pass the instance of VisualLogic to betting_round_ai_first in mainprogram.py
+            game_state = betting_round_ai_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet) # Pass the instance of VisualLogic to betting_round_ai_first in mainprogram.py
 
         if game_state == "fold":
             print("You folded. Game over!")
@@ -198,9 +198,9 @@ class CommandLineGame:
         
         self.ai_strength = eval_hand(hand1=self.ai_deck, com_cards=self.community_deck) # Re-evaluate the AI's hand strength after the river card is revealed
         if small_blind == True:
-            game_state = betting_round_user_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet, self) # Pass the instance of VisualLogic to betting_round_user_first in mainprogram.py
+            game_state = betting_round_user_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet) # Pass the instance of VisualLogic to betting_round_user_first in mainprogram.py
         else:
-            game_state = betting_round_ai_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet, self) # Pass the instance of VisualLogic to betting_round_ai_first in mainprogram.py
+            game_state = betting_round_ai_first(self.ai_strength, self.pot, self.user_bank, self.recent_bet) # Pass the instance of VisualLogic to betting_round_ai_first in mainprogram.py
         
         if game_state == "fold":
             print("You folded. Game over!")

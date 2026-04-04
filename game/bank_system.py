@@ -1,9 +1,8 @@
 # This code is part of a betting system for a game. It handles the user's bank balance and allows them to place bets.
 class BettingSystem:
-    def __init__(self,user_bank,visual_logic): # Constructor
+    def __init__(self,user_bank): # Constructor
         self.user_bank = user_bank
         self.current_bet = 0
-        self.visual_logic = visual_logic
 
     def place_bet(self): # Method for placing a bet
         while True: # Loop until a valid bet is placed
