@@ -132,7 +132,7 @@ class VisualLogic: # Class for the visual logic of the game
         user_bank = game_state[2] # Get the user bank from the login method
         self.condition = game_state[0] # Get the condition from the login method
         if self.condition: # If the login is successful
-            from game.mainprogram import main_game  # Import main_game function here
+            from game.main import main_game  # Import main_game function here
             main_game(username, user_bank, self)  # Pass the instance of VisualLogic to main_game
 
     def tutorial_mode_enabled(self): # Method to handle the action when the user is ready to play
@@ -260,7 +260,7 @@ class VisualLogic: # Class for the visual logic of the game
         label.pack(side="left", padx=5) # Pack the label to the left with some padding
 
     def action_recommendation(self): # Method to provide action recommendations based on the user's hand strength
-        from game.mainprogram import eval_hand # Import eval_hand function here
+        from game.main import eval_hand # Import eval_hand function here
         self.user_hand_strength = eval_hand(hand1=self.user_deck, com_cards=self.community_deck) # Evaluate the user's hand strength
         if self.user_hand_strength > 5: # Check if the user's hand strength is greater than 5
             self.guide_box.insert(tk.END, "You have a strong hand, consider raising.\n")
@@ -307,7 +307,7 @@ class VisualLogic: # Class for the visual logic of the game
         self.ai_strength = 0  # Reset ai_strength to 0
         self.recent_bet = 0  # Reset recent_bet to 0
         # Variables are cleared to prevent logic errors in the next game
-        from game.mainprogram import main_game, reset_deck # Import main_game and reset_deck functions here
+        from game.main import main_game, reset_deck # Import main_game and reset_deck functions here
         reset_deck()  # Reset the deck
         main_game(self.username, self.user_bank, self) # Pass the instance of VisualLogic to main_game as self
         # Call the main_game function to start a new game
@@ -324,7 +324,7 @@ class VisualLogic: # Class for the visual logic of the game
     def main_game_visual(self,var): # Main method to create the main game window and handle the game logic
         """""Main method to create the main game window and handle the game logic."""
         
-        from game.mainprogram import blind_decider, handle_small_blind_ai, handle_small_blind_user,eval_hand,betting_round_ai_first,betting_round_user_first,community_cards,result_function # Import the functions here
+        from game.main import blind_decider, handle_small_blind_ai, handle_small_blind_user,eval_hand,betting_round_ai_first,betting_round_user_first,community_cards,result_function # Import the functions here
         game_window = tk.Toplevel(self.master) # Create a new window for the game
         game_window.title("Poker Game") # Set the title of the window
         game_window.geometry("1200x900") # Set the resolution of the window
