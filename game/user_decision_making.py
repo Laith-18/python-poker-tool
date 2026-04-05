@@ -11,12 +11,11 @@ class UserDecisionMaking:
         visual_logic (VisualLogic): Object to handle UI interactions and display.
     """
 
-    def __init__(self, going_first, pot, user_bank, recent_bet,visual_logic): # Constructor
+    def __init__(self, going_first, pot, user_bank, recent_bet,): # Constructor
         self.going_first = going_first
         self.pot = pot
         self.user_bank = user_bank
         self.recent_bet = recent_bet
-        self.visual_logic = visual_logic # Initialize the class with the given parameters
     
     def get_decision(self): # Method for getting the user's decision
         """
@@ -24,7 +23,9 @@ class UserDecisionMaking:
         Returns:
             str or list: The user's decision and updated game state info.
         """
-        decision, raise_amount = self.visual_logic.betting_buttons() # Call the betting_buttons method from the visual_logic class
+        print("Actions: fold, call, raise") # Print the available actions to the user
+        decision = input("Enter your decision: ").strip().lower() # Get the user's decision input
+        raise_amount = 0
         if decision == "fold":
                 return "fold"
         elif decision == "call":
@@ -39,19 +40,22 @@ class UserDecisionMaking:
             return raise_amount
             # Output format: [raise_amount, pot, user_bank, recent_bet] 
 
-    def raise_function(self,raise_amount): # Method for raising the bet
-        while True: # Loop until a valid raise amount is entered
-            try: # Try to get the raise amount from the user
-                if raise_amount > self.user_bank: # Check if the raise amount is greater than the user's bank
-                    self.visual_logic.update_log("You cannot raise by more than your bank")
-                    return "retry" 
-                else: # If the raise amount is valid, update the game state
-                    raise_amount = raise_amount + self.recent_bet # Add the raise amount to the recent bet
-                    self.pot += raise_amount # Add the raise amount to the pot
-                    self.user_bank -= raise_amount # Update the user's bank
-                    self.recent_bet = raise_amount # Update the recent bet
-                    return [raise_amount, self.pot, self.user_bank, self.recent_bet]
-                    # Output format: [raise_amount, pot, user_bank, recent_bet]
+    def raise_function(self, raise_amount):
+        while True:
+            try:
+                raise_amount = int(input("Enter the amount you want to raise by: "))
+                if raise_amount <= 0:
+                    print("Raise amount must be greater than 0.")
+                    continue
+                total_cost = raise_amount + self.recent_bet  # total chips user must put in
+                if total_cost > self.user_bank:
+                    print(f"You cannot afford that raise. You have {self.user_bank} chips.")
+                    continue
+                # Valid raise — update state
+                self.user_bank -= total_cost
+                self.pot += total_cost
+                self.recent_bet = total_cost
+                return [raise_amount, self.pot, self.user_bank, self.recent_bet]
             except ValueError:
-                print("Invalid input, try again")
+                print("Invalid input, try again.")
 

@@ -33,37 +33,38 @@ from ai_decision_making import PokerAI
 import random
 
 class BettingRounds:
-    def __init__(self, ai_strength, pot, user_bank, recent_bet, visual_logic):
+    def __init__(self, ai_strength, pot, user_bank, recent_bet):
         self.ai_strength = ai_strength
         self.pot = pot
         self.user_bank = user_bank
         self.recent_bet = recent_bet
-        self.visual_logic = visual_logic
+        #self.visual_logic = visual_logic
 
     def ai_first(self):
         raise_amount = 1
         raise_amount_u = 0
-        self.visual_logic.update_log("The AI acts first")
+        #self.visual_logic.update_log("The AI acts first")
         while raise_amount != 0 or raise_amount_u != 0:
             temp = self.decision_making(True, raise_amount_u)
             if temp[0] == "call":
-                self.visual_logic.update_log("The AI has called, matching the bet of: " + str(self.recent_bet))
+                #self.visual_logic.update_log("The AI has called, matching the bet of: " + str(self.recent_bet))
                 self.pot += self.recent_bet
-                self.visual_logic.update_log(f"The pot is now: {self.pot}")
-                self.visual_logic.update_pot(pot=self.pot)
+                #self.visual_logic.update_log(f"The pot is now: {self.pot}")
+                #self.visual_logic.update_pot(pot=self.pot)
                 raise_amount = 0
+                raise_amount_u = 0
             elif temp[0] == "raise":
                 raise_amount = int(round(temp[1]))
-                self.visual_logic.update_log(f"The AI has raised by: {raise_amount}")
-                self.visual_logic.update_pot(pot=self.pot)
+                #self.visual_logic.update_log(f"The AI has raised by: {raise_amount}")
+                #self.visual_logic.update_pot(pot=self.pot)
                 self.pot += raise_amount
                 self.recent_bet = raise_amount
-                self.visual_logic.update_log(f"The pot is now: {self.pot}")
-                self.visual_logic.update_pot(pot=self.pot)
+                #self.visual_logic.update_log(f"The pot is now: {self.pot}")
+                #self.visual_logic.update_pot(pot=self.pot)
             elif temp[0] == "fold":
-                self.visual_logic.update_log("The AI has folded. Game over!")
+                #self.visual_logic.update_log("The AI has folded. Game over!")
                 self.user_bank += self.pot
-                self.visual_logic.update_user_bank(user_bank=self.user_bank)
+                #self.visual_logic.update_user_bank(user_bank=self.user_bank)
                 return False
 
             temp_u = self.user_decision(going_first=False, recent_bet=self.recent_bet)
@@ -72,10 +73,10 @@ class BettingRounds:
             elif isinstance(temp_u, list):
                 raise_amount_u = int(temp_u[0])
                 self.pot += raise_amount_u
-                self.visual_logic.update_pot(pot=self.pot)
+                #self.visual_logic.update_pot(pot=self.pot)
                 self.user_bank = temp_u[2]
                 self.recent_bet = temp_u[3]
-                self.visual_logic.update_user_bank(user_bank=self.user_bank)
+                #self.visual_logic.update_user_bank(user_bank=self.user_bank)
             if raise_amount == 0 and raise_amount_u == 0:
                 break
         return [self.pot, self.user_bank, self.recent_bet]  # Return the pot and user bank after the betting round
@@ -83,7 +84,7 @@ class BettingRounds:
     def user_first(self):
         raise_amount = 1
         raise_amount_u = 0
-        self.visual_logic.update_log("You act first. Choose an action: Call, Raise, or Fold.")
+        #self.visual_logic.update_log("You act first. Choose an action: Call, Raise, or Fold.")
         while raise_amount != 0:
             temp_u = self.user_decision(going_first=True,recent_bet=self.recent_bet)                
             if temp_u == "fold":
@@ -92,34 +93,33 @@ class BettingRounds:
             elif isinstance(temp_u, list):
                 raise_amount_u = int(temp_u[0])  
                 self.pot += raise_amount_u  # Add the user's raise amount to the pot
-                #update pot on screen
-                self.visual_logic.update_pot(pot=self.pot)
+                #self.visual_logic.update_pot(pot=self.pot)
                 self.user_bank = temp_u[2]
-                self.visual_logic.update_user_bank(user_bank=self.user_bank)
+                #self.visual_logic.update_user_bank(user_bank=self.user_bank)
                 self.recent_bet = temp_u[3]
           
             temp = self.decision_making(False,raise_amount_u)
             if temp[0] == "fold":
-                self.visual_logic.update_log("The AI has folded. Game over!")
+                #self.visual_logic.update_log("The AI has folded. Game over!")
                 self.user_bank += self.pot  # Add the pot to the user's bank if AI folds
-                self.visual_logic.update_user_bank(user_bank=self.user_bank)
+                #self.visual_logic.update_user_bank(user_bank=self.user_bank)
                 return "ai_folded"
             
             elif temp[0] == "call":
-                self.visual_logic.update_log("The AI has called, matching your bet of: " + str(self.recent_bet))
+                #self.visual_logic.update_log("The AI has called, matching your bet of: " + str(self.recent_bet))
                 self.pot += self.recent_bet  # Add the recent bet to the pot
-                self.visual_logic.update_log(f"The pot is now: {self.pot}")
-                self.visual_logic.update_pot(pot=self.pot)
+                #self.visual_logic.update_log(f"The pot is now: {self.pot}")
+                #self.visual_logic.update_pot(pot=self.pot)
                 raise_amount = 0
             
             elif temp[0] == "raise":
                 raise_amount = int(round(temp[1]))
-                self.visual_logic.update_log(f"The AI has raised by: {raise_amount}")
+                #self.visual_logic.update_log(f"The AI has raised by: {raise_amount}")
                 self.pot += raise_amount + self.recent_bet  # Add both the raise amount and the recent bet to the pot
-                self.visual_logic.update_pot(pot=self.pot)
+                #self.visual_logic.update_pot(pot=self.pot)
                 self.recent_bet = raise_amount + self.recent_bet  # Update the recent bet
-                self.visual_logic.update_log(f"The pot is now: {self.pot}")
-                self.visual_logic.update_pot(pot=self.pot)            
+                #self.visual_logic.update_log(f"The pot is now: {self.pot}")
+                #self.visual_logic.update_pot(pot=self.pot)
             if raise_amount == 0 and raise_amount_u == 0:
                 break
             else:
@@ -127,7 +127,7 @@ class BettingRounds:
         return [self.pot, self.user_bank, self.recent_bet]  # Return the pot and user bank after the betting round
 
     def user_decision(self, going_first,recent_bet):
-        user_decision_maker = UserDecisionMaking(going_first, pot=self.pot, user_bank=self.user_bank, recent_bet=recent_bet, visual_logic=self.visual_logic)
+        user_decision_maker = UserDecisionMaking(going_first, pot=self.pot, user_bank=self.user_bank, recent_bet=recent_bet)
         var = user_decision_maker.get_decision()
         if var == "fold":
             return("fold")
@@ -135,6 +135,6 @@ class BettingRounds:
             return(var)
 
     def decision_making(self, going_first, raise_amount):
-        poker_ai = PokerAI(going_first, strength=self.ai_strength, raise_amount= raise_amount, random_factor = random.random(), visual_logic=self.visual_logic)
+        poker_ai = PokerAI(going_first, strength=self.ai_strength, raise_amount= raise_amount, random_factor = random.random())
         var = poker_ai.make_decision()
         return var
