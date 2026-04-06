@@ -56,28 +56,26 @@ class GameEngine:
         
         return state
 
-    def run_betting_round(self, state, user_goes_first):
+    def run_betting_round(self, state, user_goes_first, decision=None, raise_amount=0):
 
         betting = BettingRounds(state.ai_strength, state.pot, state.user_bank, state.recent_bet)
 
         if user_goes_first:
-            result = betting.user_first()
+            result = betting.user_first(decision, raise_amount)
         else:
-            result = betting.ai_first()
+            result = betting.ai_first(decision, raise_amount)
         
         if result == "fold":
             return "fold"
         elif result == "ai_fold":
             state.user_bank += state.pot
             return "ai_fold"
-        elif result == False:
-            state.user_bank += state.pot
-            return "ai_fold"
+
         else:
             state.pot = result[0]
             state.user_bank = result[1]
             state.recent_bet = result[2]
-            return "continue"
+            return result[3] # Return whether the round is over or should continue
         
     def evaluate_ai_strength(self, state):
         state.ai_strength = eval_hand(state.ai_deck, state.community_deck)
