@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from game.login_system import LoginClass
 from game.game_engine import GameEngine
+from utilities.card_loader import get_card_image_from_file
 
 
 app = Flask(__name__)
@@ -58,7 +59,7 @@ def play_game():
 
         game_engine.run_betting_round(state, user_goes_first=True,decision=decision)
 
-    return render_template("index.html", state=state)
+    return render_template("index.html", state=state, get_card_image_from_file=get_card_image_from_file)
 
 if __name__ == "__main__":
     app.run(debug=True)
