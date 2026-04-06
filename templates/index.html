@@ -44,5 +44,23 @@
             <button type="submit" name="decision" value="raise">Raise</button>
         </form>
     </div>
+    <div class="deck-area">
+        <h3>Game Actions</h3>
+        {% if state.round_message %}
+            <p style="color: yellow; font-weight: bold;">{{ state.round_message }}</p>
+        {% endif %}
+
+        <form method ="POST">
+            {% if state.phase in ["game_over", "showdown"] %}
+                <button type="submit" name="decision" value="next_hand" style="padding: 10px; font-size: 16px;">Play Next Hand</button>
+            {% else %}
+                <button type="submit" name="decision" value="call">Call / Check</button>
+                <button type="submit" name="decision" value="fold">Fold</button>
+                <br><br>
+                <input type="number" name="raise_amount" placeholder="Raise amount" min="1">
+                <button type="submit" name="decision" value="raise">Raise</button>
+            {% endif %}
+        </form>
+    </div>
 </body>
 </html>
