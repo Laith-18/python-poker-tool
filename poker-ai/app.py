@@ -57,7 +57,43 @@ def play_game():
         raise_amount = request.form.get("raise_amount",0,type=int)
 
 
-        game_engine.run_betting_round(state, user_goes_first=True,decision=decision)
+        if decision == "next_hand":
+            #reset the game state for the next hand but keep the username and user bank
+            active_games[username] = game_engine.setup_new_game(username, state.user_bank)
+            active_games[username] = game_engine.determine_blinds(active_games[username])
+            return redirect(url_for("play_game"))
+
+        #otherwise we are in the middle of a hand and need to process the user's decision
+        if decision in ["call","raise","fold"]:
+            outcome = game_engine.run_betting_round(state, user_goes_first=state.small_blind, decision=decision, raise_amount=raise_amount)
+        
+        if outcome =="fold":
+            state.phase = "game_over"
+            state.round_message= "You folded. AI wins the pot."
+            state.user_bank += state.pot
+            state.pot = 0
+        
+        elif outcome == "round_over":
+            state.recent_bet = 0 # Reset recent bet for the next round
+        
+            if state.phase =="preflop":
+                state.community_deck= game_engine.community_cards(state.community_deck, count=3)
+                state.phase = "flop"
+            elif state.phase == "flop":
+                state.community_deck = game_engine.community_cards(state.community_deck, count=1)
+                state.phase = "turn"
+            elif state.phase == "turn":
+                state.community_deck = game_engine.community_cards(state.community_deck, count=1)
+                state.phase = "river"
+            elif state.phase == "river":
+                state.phase = "showdown"
+                state.round_msg = "Showdown reached!"
+    
+        elif outcome == "continue":
+            state.round_msg = "Betting round continues. AI raise. Respond: call, raise, or fold."
+        
+    active_games[username] = state
+
 
     return render_template("index.html", state=state, get_card_image_from_file=get_card_image_from_file)
 
