@@ -58,6 +58,7 @@ def play_game():
 
 
         if decision == "next_hand":
+
             #reset the game state for the next hand but keep the username and user bank
             active_games[username] = game_engine.setup_new_game(username, state.user_bank)
             active_games[username] = game_engine.determine_blinds(active_games[username])
@@ -87,7 +88,28 @@ def play_game():
                 state.phase = "river"
             elif state.phase == "river":
                 state.phase = "showdown"
-                state.round_msg = "Showdown reached!"
+
+
+                user_strength = game_engine.evaluate_user_strength(state)
+                ai_strength = game_engine.evaluate_ai_strength(state)
+
+                if user_strength > ai_strength:
+                    state.round_msg = f"You win the hand! Your hand was: {user_strength}, AI hand was: {ai_strength}."
+                    state.user_bank += state.pot
+                elif ai_strength > user_strength:
+                    state.round_msg = f"AI wins the hand. Your hand was: {user_strength}, AI hand was: {ai_strength}."
+                else:
+                    state.round_msg = f"It's a tie! Your hand was: {user_strength}, AI hand was: {ai_strength}. Pot is split."
+                    state.user_bank += state.pot // 2
+                state.pot = 0
+
+                session["bank"] = state.user_bank # Update the user's bank in the session after the hand is resolved
+
+
+
+                #DEBUG DEBUG DEBUG
+
+
     
         elif outcome == "continue":
             state.round_msg = "Betting round continues. AI raise. Respond: call, raise, or fold."

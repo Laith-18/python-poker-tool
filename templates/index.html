@@ -15,14 +15,18 @@
     <div class="deck-area">
         <h3>AI's Cards</h3>
         {% for card in state.ai_deck %}
+            {% if state.phase in ["showdown", "game_over"] %}
+                <img src="/static/cards/{{ get_card_image_from_file(card) }}" class="card">
+            {% else %}
             <img src="/static/cards/back.jpg" class="card">
+            {% endif %}
         {% endfor %}
     </div>
 
     <div class="deck-area">
         <h3>Community Cards</h3>
         {% for card in state.community_deck %}
-            <img src="/static/cards/{{ get_card_image(card) }}" class="card">
+            <img src="/static/cards/{{ get_card_image_from_file(card) }}" class="card">
         {% endfor %}
  
     </div>
@@ -30,7 +34,7 @@
     <div class="deck-area">
         <h3>Your Cards</h3>
         {% for card in state.user_deck %}
-            <img src="/static/cards/{{ get_card_image(card) }}" class="card">
+            <img src="/static/cards/{{ get_card_image_from_file(card) }}" class="card">
         {% endfor %}
     </div>
 
