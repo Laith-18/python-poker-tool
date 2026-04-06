@@ -16,7 +16,7 @@ class UserDecisionMaking:
         self.user_bank = user_bank
         self.recent_bet = recent_bet
     
-    def get_decision(self, decision, raise_amount): # Method for getting the user's decision
+    def get_decision(self, decision, raise_amount_input=0): # Method for getting the user's decision
 
 
         if decision == "fold":
@@ -29,9 +29,10 @@ class UserDecisionMaking:
                 return [0, self.pot, self.user_bank, self.recent_bet]
                 #Output format: [0, pot, user_bank, recent_bet]
         elif decision == "raise":
+            raise_amount = int(raise_amount_input)  # Convert the raise amount input to an integer
             total_cost = raise_amount + self.recent_bet  # total chips user must put in
             if total_cost > self.user_bank:
-                return "invalid_raise"  # User cannot afford the raise 
+                return "invalid_funds"  # User cannot afford the raise 
             self.user_bank -= total_cost
             self.pot += total_cost
             self.recent_bet = total_cost
