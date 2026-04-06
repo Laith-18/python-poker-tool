@@ -14,5 +14,7 @@ class GameState:
     community_deck: List = field(default_factory=list)
     ai_strength: int = 0
     user_strength: int = 0
-    tutorial_mode: bool = False
-    user_hand_strength: int = 0
+    #added for flask
+    phase: str = "preflop"
+    round_over: bool = False
+
