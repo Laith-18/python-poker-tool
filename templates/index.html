@@ -1,1 +1,48 @@
-<h1>Working</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Poker Table</title>
+    <style>
+        body { background-image: url('/static/cards/background.jpg'); color: white; font-family: Arial; text-align: center;}
+        .card { width: 100px; height: 140px; margin: 5px; }
+        .deck-area { margin: 20px; padding: 20px; background: rgba(0,0,0,0.5); border-radius: 10px; display: inline-block;}
+    </style>
+</head>
+<body>
+    <h1>Python Poker Tool</h1>
+    <p>Player: {{ state.username }} | Bank: ${{ state.user_bank }} | Pot: ${{ state.pot }}</p>
+
+    <div class="deck-area">
+        <h3>AI's Cards</h3>
+        {% for card in state.ai_deck %}
+            <img src="/static/cards/back.jpg" class="card">
+        {% endfor %}
+    </div>
+
+    <div class="deck-area">
+        <h3>Community Cards</h3>
+        {% for card in state.community_deck %}
+            <img src="/static/cards/{{ get_card_image(card) }}" class="card">
+        {% endfor %}
+ 
+    </div>
+
+    <div class="deck-area">
+        <h3>Your Cards</h3>
+        {% for card in state.user_deck %}
+            <img src="/static/cards/{{ get_card_image(card) }}" class="card">
+        {% endfor %}
+    </div>
+
+    <div class="deck-area">
+        <h3>Make a Move</h3>
+        <form method="POST">
+            <button type="submit" name="decision" value="call">Call</button>
+            <button type="submit" name="decision" value="fold">Fold</button>
+            <br><br>
+            <input type="number" name="raise_amount" placeholder="Raise amount" min="1">
+            <button type="submit" name="decision" value="raise">Raise</button>
+        </form>
+    </div>
+</body>
+</html>
