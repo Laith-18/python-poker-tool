@@ -1,14 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from game.login_system import LoginClass
-from game.game_engine import GameEngine
+
+from game import login_system
+from game import game_engine
+
+
 from utilities.card_loader import get_card_image_from_file
 
 
 app = Flask(__name__)
 app.secret_key = "poker"
 
-login_system = LoginClass()
-game_engine = GameEngine()
+login_system = login_system.LoginClass()
+game_engine = game_engine.GameEngine()
 
 active_games = {} # Dictionary to store active game states for each user
 
