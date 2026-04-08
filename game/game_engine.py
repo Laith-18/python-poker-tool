@@ -1,11 +1,10 @@
-
-from card_selector import Deck             
-from login_system import LoginClass                 
-from blind_determiner import BlindDecider            
-from strength_determiner import eval_hand             
-from result import ResultDeterminer                   
-from betting_rounds import BettingRounds              
-from game_state import GameState 
+from game.card_selector import Deck             
+from game.login_system import LoginClass                 
+from game.blind_determiner import BlindDecider            
+from game.strength_determiner import eval_hand             
+from game.result import ResultDeterminer                   
+from game.betting_rounds import BettingRounds              
+from game.game_state import GameState 
 
 
 class GameEngine:
@@ -61,9 +60,9 @@ class GameEngine:
         betting = BettingRounds(state.ai_strength, state.pot, state.user_bank, state.recent_bet)
 
         if user_goes_first:
-            result = betting.user_first(decision, raise_amount)
+            result = betting.user_first(decision, user_raise_amount=raise_amount)
         else:
-            result = betting.ai_first(decision, raise_amount)
+            result = betting.ai_first(decision, raise_amount=raise_amount)
         
         if result == "fold":
             return "fold"

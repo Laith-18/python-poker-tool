@@ -26,7 +26,7 @@ def login():
             user_data = login_system.login(username, password)
             if user_data:
                 session["username"] = username
-                session["user_bank"] = user_data["bank"]
+                session["user_bank"] = user_data[1] 
                 return redirect(url_for("play_game"))
             else:
                 return render_template("login.html", error="Invalid username or password")
@@ -48,7 +48,7 @@ def play_game():
     username = session["username"]
 
     if username not in active_games:
-        state = game_engine.setup_new_game(username, session["bank"])
+        state = game_engine.setup_new_game(username, session["user_bank"])
         state = game_engine.determine_blinds(state)
 
         active_games[username] = state
