@@ -7,11 +7,16 @@
 # This code is part of a login system for a poker game. It allows users to register, login, and manage their bank balance.
 
 import hashlib,json
+import os
 class LoginClass: # Class for the login system
     def __init__(self,filename="logindetails.json"): # Constructor
         self.filename = filename 
         self.users = self.load_file() # Load user data from the JSON file
         self.current_user = None 
+
+        if filename is None:
+            filename = os.path.join(os.path.dirname(__file__), 'logindetails.json')
+        self.filename = filename
 
     def load_file(self): # Method for loading user data from the JSON file
         try: # Open the file and read the data
@@ -55,5 +60,10 @@ class LoginClass: # Class for the login system
             return self.current_user
         else:
             raise ValueError("No user is currently logged in.")
+        
+    def delete_account(self, username):
+        if username in self.users:
+            del self.users[username] # Remove the user from the dictionary
+            self.save_users() # Save the updated data to the JSON file
 
 
