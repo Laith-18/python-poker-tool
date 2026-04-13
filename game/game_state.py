@@ -18,4 +18,5 @@ class GameState:
     phase: str = "preflop"
     round_over: bool = False
     round_message: str = ""
+    message_log: List[str] = field(default_factory=list)
 

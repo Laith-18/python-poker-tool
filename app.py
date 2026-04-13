@@ -15,6 +15,28 @@ game_engine = GameEngine()
 
 active_games = {} # Dictionary to store active game states for each user
 
+MAX_LOG_MESSAGES = 10
+
+
+def add_game_message(state, message):
+    if not message:
+        return
+
+    if state.message_log is None:
+        state.message_log = []
+
+    state.message_log.append(message)
+    state.message_log = state.message_log[-MAX_LOG_MESSAGES:]
+    state.round_message = message
+
+
+def log_blinds_message(state):
+    if state.small_blind:
+        user_small_blind = max(1, state.ai_bet // 2)
+        add_game_message(state, f"Blinds posted: you {user_small_blind} (small), AI {state.ai_bet} (big).")
+    else:
+        add_game_message(state, f"Blinds posted: AI {state.ai_bet} (small), you {state.recent_bet} (big).")
+
 
 def settle_showdown(state, username):
     state.phase = "showdown"
@@ -42,15 +64,18 @@ def settle_showdown(state, username):
             state.round_message = f"It's a tie! Your hand was: {user_strength}, AI hand was: {ai_strength}. Pot is split."
             state.user_bank += state.pot // 2
 
+    winning_summary = state.round_message
     state.pot = 0
     session["user_bank"] = state.user_bank
     login_system.update_bank(username, state.user_bank)
+    add_game_message(state, winning_summary)
 
 
 def resolve_all_in_if_needed(state, username):
     if state.user_bank > 0 or state.phase in ["showdown", "game_over"]:
         return
 
+    add_game_message(state, "You're all-in. Remaining community cards are dealt automatically.")
     missing_cards = 5 - len(state.community_deck)
     if missing_cards > 0:
         state.community_deck = game_engine.community_cards(state.community_deck, count=missing_cards)
@@ -92,6 +117,7 @@ def play_game():
     if username not in active_games:
         state = game_engine.setup_new_game(username, session["user_bank"])
         state = game_engine.determine_blinds(state)
+        log_blinds_message(state)
 
         active_games[username] = state
     
@@ -105,10 +131,16 @@ def play_game():
 
 
         if decision == "next_hand":
+            if state.user_bank <= 0:
+                state.phase = "game_over"
+                add_game_message(state, "You are out of chips. Restart from login to play again.")
+                active_games[username] = state
+                return redirect(url_for("play_game"))
 
             #reset the game state for the next hand but keep the username and user bank
             active_games[username] = game_engine.setup_new_game(username, state.user_bank)
             active_games[username] = game_engine.determine_blinds(active_games[username])
+            log_blinds_message(active_games[username])
             return redirect(url_for("play_game"))
 
         #otherwise we are in the middle of a hand and need to process the user's decision
@@ -117,17 +149,21 @@ def play_game():
         
         if outcome == "fold":
             state.phase = "game_over"
-            state.round_message= "You folded. AI wins the pot."
+            add_game_message(state, "You folded. AI wins the pot.")
             state.pot = 0
         
         elif outcome == "ai_folded":
             state.phase = "game_over"
-            state.round_message= "AI folded. You win the pot!"
+            add_game_message(state, "AI folded. You win the pot!")
             state.user_bank += state.pot
             state.pot = 0
             login_system.update_bank(username, state.user_bank) # Update the user's bank in the database after winning the pot
         
         elif outcome == "round_over":
+            if decision == "call":
+                add_game_message(state, "You call/check. Betting round complete.")
+            elif decision == "raise":
+                add_game_message(state, f"You raise by {raise_amount}. AI calls. Betting round complete.")
             state.recent_bet = 0 # Reset recent bet for the next round
         
             if state.phase =="preflop":
@@ -143,11 +179,11 @@ def play_game():
                 settle_showdown(state, username)
 
         elif outcome == "continue":
-            state.round_message = "Betting round continues. AI raise. Respond: call, raise, or fold."
+            add_game_message(state, f"AI raises to {state.recent_bet}. Respond with call, raise, or fold.")
         elif outcome == "invalid_funds":
-            state.round_message = "Insufficient funds for that move. Try a smaller raise or call/fold."
+            add_game_message(state, "Insufficient funds for that move. Try a smaller raise or call/fold.")
         elif outcome == "invalid_action":
-            state.round_message = "Invalid action for the current state. Please choose call, raise, or fold."
+            add_game_message(state, "Invalid action for the current state. Please choose call, raise, or fold.")
 
         resolve_all_in_if_needed(state, username)
         
