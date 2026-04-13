@@ -1,11 +1,11 @@
+import random
 
-from card_selector import Deck             
-from login_system import LoginClass                 
-from blind_determiner import BlindDecider            
-from strength_determiner import eval_hand             
-from result import ResultDeterminer                   
-from betting_rounds import BettingRounds              
-from game_state import GameState 
+from game.card_selector import Deck             
+from game.login_system import LoginClass                 
+from game.blind_determiner import BlindDecider            
+           
+from game.betting_rounds import BettingRounds              
+from game.game_state import GameState 
 
 
 class GameEngine:
@@ -41,7 +41,7 @@ class GameEngine:
         state.small_blind = blind_result[3]
 
         if state.small_blind:
-            result = decider.small_blind_user()
+            result = decider.small_blind_user(entered_bet=random.randint(2,8))
             state.pot = result[0]
             state.recent_bet = result[2]
             state.ai_bet = state.recent_bet * 2
@@ -56,36 +56,43 @@ class GameEngine:
         
         return state
 
-    def run_betting_round(self, state, user_goes_first):
+    def run_betting_round(self, state, user_goes_first, decision=None, raise_amount=0):
 
         betting = BettingRounds(state.ai_strength, state.pot, state.user_bank, state.recent_bet)
 
         if user_goes_first:
-            result = betting.user_first()
+            result = betting.user_first(decision, user_raise_amount=raise_amount)
         else:
-            result = betting.ai_first()
+            result = betting.ai_first(decision, raise_amount=raise_amount)
         
         if result == "fold":
             return "fold"
         elif result == "ai_fold":
             state.user_bank += state.pot
             return "ai_fold"
-        elif result == False:
-            state.user_bank += state.pot
-            return "ai_fold"
+
         else:
             state.pot = result[0]
             state.user_bank = result[1]
             state.recent_bet = result[2]
-            return "continue"
+            return result[3] # Return whether the round is over or should continue
         
     def evaluate_ai_strength(self, state):
-        state.ai_strength = eval_hand(state.ai_deck, state.community_deck)
-        return state
+        from game.strength_determiner import eval_hand
+        strength = eval_hand(state.ai_deck, state.community_deck)
+        state.ai_strength = strength
+        return int(strength)
+    
+    def evaluate_user_strength(self, state):
+        from game.strength_determiner import eval_hand
+        strength = eval_hand(state.user_deck, state.community_deck)
+        state.user_strength = strength
+        return int(strength)
 
     def determine_result(self, state):
-        result = ResultDeterminer(state.user_deck, state.ai_deck, state.community_deck, state.pot, state.username, state.user_bank, login_system=self.login_system)
-        result = result.determine_winner(state.pot)
+        from game.result import ResultDeterminer
+        result = ResultDeterminer(state.user_deck, state.ai_deck, state.community_deck, state.pot, state.username, state.user_bank, login_system=self.login)
+        return result
 
     def setup_new_game(self, username, user_bank):
         self.reset_deck()

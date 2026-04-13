@@ -1,5 +1,4 @@
-from strength_determiner import eval_hand
-from login_system import LoginClass
+from game.strength_determiner import eval_hand
 class ResultDeterminer:
     def __init__(self,user_deck,ai_deck,community_deck,pot,username,user_bank,login_system):
         self.user_deck = user_deck

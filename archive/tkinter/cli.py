@@ -26,7 +26,7 @@ class CommandLineGame:
         while True: # Loop to keep the game running until the user decides to exit
             self.play_game(username, user_bank) # Call the play_game method to start the game with the logged-in user's username and bank
             again = input("Do you want to play again? (yes/no): ") # Ask the user if they want to play again
-            if again.lower() != "yes" or again.lower() != "y": # If the user does not want to play again, exit the loop and end the game
+            if again.lower() != "yes" and again.lower() != "y": # If the user does not want to play again, exit the loop and end the game
                 break
         print("Thank you for playing! Goodbye!") # Print a goodbye message when the user decides to exit the game
 
@@ -81,7 +81,7 @@ class CommandLineGame:
 
     def play_game(self,username, user_bank):
 
-        state = self.game_engine.initialize_game(username, user_bank) # Call the initialize_game method to set up the initial game state
+        state = self.game_engine.setup_new_game(username, user_bank) # Call the setup_new_game method to set up the initial game state
 
 
         #blinds
@@ -162,7 +162,7 @@ class CommandLineGame:
         print(f"AI's hand: {state.ai_deck} | Strength: {ai_strength}")
         print(f"Community: {state.community_deck}")
 
-        result = self.game_engine.determine_winner(state) # Call the determine_winner method to determine the winner of the showdown based on hand strengths
+        result = self.game_engine.determine_result(state) # Call the determine_result method to determine the result of the showdown based on hand strengths
         if result == "win":
             print(f"You win the pot of ${state.pot}!")
         elif result == "lose":

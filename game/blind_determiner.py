@@ -1,5 +1,5 @@
 import random
-from bank_system import BettingSystem
+from game.bank_system import BankSystem
 
 class BlindDecider:
     def __init__(self, user_bank, pot): # Constructor
@@ -20,10 +20,9 @@ class BlindDecider:
         return [self.pot, self.ai_bet, self.recent_bet, self.small_blind]
         #Output format: [pot, ai_bet, recent_bet, small_blind]
 
-    def small_blind_user(self): # Method for the user small blind and the AI big blind logic
-        print("You are the small blind. Please place your bet.") # Outputs a message to the tkinter window
-        betting_system = BettingSystem(self.user_bank) # Create an instance of the BettingSystem class
-        result = betting_system.place_bet() # Call the place_bet method
+    def small_blind_user(self, entered_bet=None): # Method for the user small blind and the AI big blind logic
+        bank_system = BankSystem(self.user_bank) # Create an instance of the BankSystem class
+        result = bank_system.place_bet(entered_bet) # Call the place_bet method
         self.user_bank, self.recent_bet = result # Unpack the result
         big_blind = self.recent_bet * 2
         self.pot += self.recent_bet + big_blind # Add the recent bets to the pot
@@ -37,7 +36,6 @@ class BlindDecider:
         self.recent_bet = self.ai_bet*2 # The AI's bet is double the small blind
         self.user_bank -= self.recent_bet # Deduct the recent bet from the user's bank
         self.pot += self.recent_bet # Add the recent bet to the pot
-        print("AI placed the small blind.") # Outputs a message to the tkinter window
         game_state = [self.pot, self.ai_bet, self.recent_bet, self.small_blind,self.user_bank] # Return the game state
         return game_state
         #Output format: [pot, ai_bet, recent_bet, small_blind, user_bank]
