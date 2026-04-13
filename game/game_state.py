@@ -19,4 +19,5 @@ class GameState:
     round_over: bool = False
     round_message: str = ""
     message_log: List[str] = field(default_factory=list)
+    ai_last_action: str = ""
 
