@@ -60,7 +60,7 @@ class BettingRounds:
     
         elif isinstance(temp_u, list):
             raise_amount_u = int(temp_u[0])  
-            self.pot += raise_amount_u  
+            self.pot = temp_u[1]
             self.user_bank = temp_u[2]
             self.recent_bet = temp_u[3]
         

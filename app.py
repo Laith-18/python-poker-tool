@@ -103,17 +103,17 @@ def play_game():
                 ai_strength = game_engine.evaluate_ai_strength(state)
 
                 if user_strength > ai_strength:
-                    state.round_msg = f"You win the hand! Your hand was: {user_strength}, AI hand was: {ai_strength}."
+                    state.round_message = f"You win the hand! Your hand was: {user_strength}, AI hand was: {ai_strength}."
                     state.user_bank += state.pot
                 elif ai_strength > user_strength:
-                    state.round_msg = f"AI wins the hand. Your hand was: {user_strength}, AI hand was: {ai_strength}."
+                    state.round_message = f"AI wins the hand. Your hand was: {user_strength}, AI hand was: {ai_strength}."
                 else:
-                    state.round_msg = f"It's a tie! Your hand was: {user_strength}, AI hand was: {ai_strength}. Pot is split."
+                    state.round_message = f"It's a tie! Your hand was: {user_strength}, AI hand was: {ai_strength}. Pot is split."
                     state.user_bank += state.pot // 2
                 state.pot = 0
 
-                session["bank"] = state.user_bank # Update the user's bank in the session after the hand is resolved
-
+                session["user_bank"] = state.user_bank # Update the user's bank in the session after the hand is resolved
+                login_system.update_bank(username, state.user_bank) # Update the user's bank in the database after the hand is resolved
 
 
                 #DEBUG DEBUG DEBUG
@@ -121,7 +121,7 @@ def play_game():
 
     
         elif outcome == "continue":
-            state.round_msg = "Betting round continues. AI raise. Respond: call, raise, or fold."
+            state.round_message = "Betting round continues. AI raise. Respond: call, raise, or fold."
         
     active_games[username] = state
 

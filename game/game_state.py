@@ -17,4 +17,5 @@ class GameState:
     #added for flask
     phase: str = "preflop"
     round_over: bool = False
+    round_message: str = ""
 
