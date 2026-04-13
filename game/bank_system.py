@@ -1,24 +1,24 @@
 # This code is part of a betting system for a game. It handles the user's bank balance and allows them to place bets.
-class BettingSystem:
+class BankSystem:
     def __init__(self,user_bank): # Constructor
-        self.user_bank = user_bank
+        self.user_bank = int(user_bank)
         self.current_bet = 0
         self.recent_bet = 0
 
-    def place_bet(self): # Method for placing a bet
-        while True: # Loop until a valid bet is placed
-            initial_bet = input("Enter your bet amount: ").strip() # Get the bet amount from the user input
-            if initial_bet.isdigit(): # Validate the input
-                initial_bet = int(initial_bet)
-                if initial_bet > self.user_bank: # Check if the bet is greater than the user's bank
-                    print("Bet exceeds your bank amount") # Outputs an error message
-                    continue
-                else:
-                    var = self.update_bank_system(initial_bet) # Call the update_bank_system method
-                    break # Exit the loop
-            else:
-                print("Invalid input. Please enter a valid bet amount.")
-        return var
+    def place_bet(self, entered_bet=None): # Method for placing a bet
+
+        if entered_bet is None:
+             return "No bet entered" # Output an error message if no bet is entered
+        try:
+            initial_bet = int(entered_bet) # Convert the entered bet to an integer
+        except (TypeError, ValueError):
+            return "invalid_bet" # Output an error message if the entered bet is not a valid integer
+        if initial_bet <= 0:
+            return "invalid_bet"
+        if initial_bet > self.user_bank:
+            return "invalid_funds"
+        
+        return self.update_bank_system(initial_bet) # Update the bank system with the initial bet and return the result
     
     def update_bank_system(self,initial_bet): # Method for updating the bank value
         self.user_bank = int(self.user_bank) -  int(initial_bet) # Update the bank value

@@ -1,33 +1,3 @@
-# Description: This file contains the class BettingRounds which is responsible for the betting rounds in the game. 
-# It contains the methods ai_first and user_first which are responsible for the betting rounds when the AI goes first and when the user goes first respectively.
-# It also contains the method user_decision which is responsible for the user's decision making during the betting rounds. 
-# The method decision_making is responsible for the AI's decision making during the betting rounds.
-
-# ASCII flowchart showing the ai_first and user_first methods
-# +------------------+------------------+
-# |   ai_first       |   user_first     | 
-# +------------------+------------------+
-# |                  |                  |
-# | 1. AI acts first  | 1. User acts first|
-# |                  |                  |
-# | 2. AI decision    | 2. User decision  |
-# |                  |                  |
-# | 3. User decision   | 3. AI decision    |
-# |                  |                  |
-# |                  |                  |
-# | 4. Repeat until   | 4. Repeat until   |
-# |    both players   |    both players   |
-# |    check or fold  |    check or fold  |
-# |                  |                  |
-# |                  |                  |
-# +------------------+------------------+
-# |                  |                  |
-# | 5. Return pot,    | 5. Return pot,    |
-# |    user bank,     |    user bank,     |
-# |    and recent bet |    and recent bet |
-# |                  |                  |
-# +------------------+------------------+
-
 from game.user_decision_making import UserDecisionMaking
 from game.ai_decision_making import PokerAI
 import random
@@ -56,7 +26,7 @@ class BettingRounds:
             elif temp[0] == "fold":
                 return "ai_folded"
 
-        if self.user_decision:
+        if user_decision:
 
             temp_u = self.user_decision(going_first=False, recent_bet=self.recent_bet, decision=self.user_decision, raise_amount=user_raise_amount)  # Get the user's decision based on the AI's action
             if temp_u == "fold":
@@ -84,7 +54,7 @@ class BettingRounds:
 
     def user_first(self, user_decision, user_raise_amount):
 
-        temp_u = self.user_decision(going_first=True,recent_bet=self.recent_bet, )                
+        temp_u = self.user_decision(going_first=True,recent_bet=self.recent_bet,decision=user_decision, raise_amount=user_raise_amount)  # Get the user's decision based on the AI's action     
         if temp_u == "fold":
             return "fold"
     

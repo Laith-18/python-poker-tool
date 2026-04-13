@@ -71,9 +71,14 @@ def play_game():
         if decision in ["call","raise","fold"]:
             outcome = game_engine.run_betting_round(state, user_goes_first=state.small_blind, decision=decision, raise_amount=raise_amount)
         
-        if outcome =="fold":
+        if outcome == "fold":
             state.phase = "game_over"
             state.round_message= "You folded. AI wins the pot."
+            state.pot = 0
+        
+        elif outcome == "ai_folded":
+            state.phase = "game_over"
+            state.round_message= "AI folded. You win the pot!"
             state.user_bank += state.pot
             state.pot = 0
         
