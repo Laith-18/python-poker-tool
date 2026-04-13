@@ -109,18 +109,25 @@ def play_game():
                 elif ai_strength > user_strength:
                     state.round_message = f"AI wins the hand. Your hand was: {user_strength}, AI hand was: {ai_strength}."
                 else:
-                    state.round_message = f"It's a tie! Your hand was: {user_strength}, AI hand was: {ai_strength}. Pot is split."
-                    state.user_bank += state.pot // 2
+                    from game.strength_determiner import rank_to_value
+
+                    user_high_card = max([rank_to_value(card[0]) for card in state.user_deck])
+                    ai_high_card = max([rank_to_value(card[0]) for card in state.ai_deck])
+
+                    if user_high_card > ai_high_card:
+                        state.round_message = f"You win the hand with a higher card! Your hand was: {user_strength} with high card {user_high_card}, AI hand was: {ai_strength} with high card {ai_high_card}."
+                        state.user_bank += state.pot
+                    elif ai_high_card > user_high_card:
+                        state.round_message = f"AI wins the hand with a higher card. Your hand was: {user_strength} with high card {user_high_card}, AI hand was: {ai_strength} with high card {ai_high_card}."
+
+                    else:
+                        state.round_message = f"It's a tie! Your hand was: {user_strength}, AI hand was: {ai_strength}. Pot is split."
+                        state.user_bank += state.pot // 2
                 state.pot = 0
 
                 session["user_bank"] = state.user_bank # Update the user's bank in the session after the hand is resolved
                 login_system.update_bank(username, state.user_bank) # Update the user's bank in the database after the hand is resolved
 
-
-                #DEBUG DEBUG DEBUG
-
-
-    
         elif outcome == "continue":
             state.round_message = "Betting round continues. AI raise. Respond: call, raise, or fold."
         
