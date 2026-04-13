@@ -6,7 +6,7 @@
         :root {
             --card-width: clamp(80px, 8.5vw, 130px);
             --card-height: clamp(112px, 12vw, 182px);
-            --log-width: min(300px, 26vw);
+            --log-width: min(520px, 46vw);
         }
 
         html, body {
@@ -42,9 +42,10 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
+            position: relative;
             height: 100vh;
             width: 100%;
-            padding: 14px 16px 14px calc(var(--log-width) + 22px);
+            padding: 14px 16px;
             box-sizing: border-box;
 
         }
@@ -57,14 +58,15 @@
             min-height: clamp(96px, 18vh, 150px);
         }
 
-        .dealer-deck { 
-            position: fixed;
-            left: 50%;
+        .dealer-deck {
+            position: absolute;
+            left: calc(100% + 100px);
             top: 50%;
-            transform: translate(180px, -50%);
-            z-index: 1000;
+            transform: translateY(-50%);
+            z-index: 8;
             box-shadow: -5px 5px 15px rgba(0,0,0,0.8);
             border-radius: 5px;
+            pointer-events: none;
         }
 
 
@@ -79,8 +81,10 @@
                     width: var(--card-width); 
                     height: var(--card-height); 
                     margin: 5px;
+                    --deal-from-x: 40vw;
+                    --deal-from-y: 0px;
                     opacity: 0;
-                    animation: dealFromRight 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+                    will-change: transform, opacity;
                 }
         .card-inner {
                     width: 100%; 
@@ -112,6 +116,26 @@
         }
 
         .pot-container {
+            position: absolute;
+            left: calc(50% + min(20vw, 260px));
+            top: 50%;
+            transform: translateY(-50%);
+            width: max-content;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .center-and-pot-row {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: clamp(170px, 22vh, 230px);
+        }
+
+        .deck-area {
+            width: max-content;
             text-align: center;
         }
 
@@ -141,21 +165,25 @@
         }
         
         .game-actions button {
-            padding: 8px 16px;
-            margin: 0 5px;
-            font-size: clamp(13px, 1.2vw, 16px);
+            padding: 10px 22px;
+            margin: 0 6px;
+            font-size: clamp(13px, 1.2vw, 15px);
             cursor: pointer;
-            border-radius: 5px;
-            border: none;
-            background-color: #fffffff3;
-            font-weight: bold;
-            transition: 0.2s;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: transform 0.12s, box-shadow 0.12s, filter 0.12s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
         
         .game-actions button:hover {
-
-            background-color: #ddd;
+            transform: translateY(-2px);
+            filter: brightness(1.15);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.5);        
         }
+        .game-actions button:active { transform: translateY(1px);}
 
         .game-actions input[type="number"] {
             padding: 8px;
@@ -166,9 +194,6 @@
         }
 
         .user-bank-pot {
-            position: absolute;
-            right: 28px;
-            bottom: 18px;
             width: clamp(90px, 9vw, 130px);
             height: clamp(90px, 9vw, 130px);
             border-radius: 50%;
@@ -183,19 +208,19 @@
             font-weight: bold;
             box-shadow: 0 8px 16px rgba(0,0,0,0.8);
             animation: valueDrop 0.6s ease-out;
-            z-index: 20;
         }
 
         .game-log {
             position: fixed;
             left: 12px;
-            top: 12px;
             bottom: 12px;
+            top: auto;
+            height: clamp(340px, 52vh, 560px);
             width: var(--log-width);
             background: rgba(8, 20, 14, 0.82);
             border: 1px solid rgba(255, 255, 255, 0.22);
             border-radius: 12px;
-            padding: 12px;
+            padding: 14px;
             box-sizing: border-box;
             z-index: 30;
             display: flex;
@@ -205,24 +230,168 @@
 
         .game-log h3 {
             margin: 0 0 8px 0;
-            font-size: 18px;
+            font-size: clamp(24px, 2.2vw, 34px);
         }
 
         .game-log-list {
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            padding-right: 4px;
+            gap: 10px;
+            padding-right: 6px;
         }
 
         .game-log-item {
             background: rgba(255, 255, 255, 0.08);
             border-left: 3px solid #ffd54f;
             border-radius: 6px;
-            padding: 8px;
-            font-size: 13px;
-            line-height: 1.35;
+            padding: 10px;
+            font-size: clamp(16px, 1.4vw, 22px);
+            line-height: 1.45;
+        }
+
+        .ai-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(14px, 2vw, 30px);
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .ai-opponent-area {
+            position: static;
+            z-index: 25;
+            flex-shrink: 0;
+        }
+
+        .ai-avatar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            gap: 2px;
+        }
+
+        .ai-avatar-face {
+            width: clamp(150px, 16vw, 220px);
+            height: clamp(150px, 16vw, 220px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            background: rgba(8, 18, 14, 0.65);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+            overflow: hidden;
+        }
+
+        .ai-avatar-face img {
+            width: 88%;
+            height: 88%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .ai-dealer-label {
+            font-size: clamp(18px, 1.8vw, 24px);
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            color: #f6f6f6;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.65);
+            margin-top: 2px;
+        }
+
+        .user-cards-with-bank {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: clamp(96px, 16vh, 170px);
+        }
+
+        .user-cards-with-bank .row {
+            margin: 0;
+        }
+
+        .user-cards-with-bank .user-bank-pot {
+            position: absolute;
+            left: calc(50% + var(--card-width) + 48px);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .game-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .game-actions-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .top-right-ui {
+            position: fixed;
+            top: 14px;
+            right: 18px;
+            z-index: 120;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .round-stats {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-pill {
+            padding: 8px 12px;
+            border-radius: 10px;
+            background: rgba(4, 16, 12, 0.88);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #f6f6f6;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .save-exit-form button {
+            padding: 10px 22px;
+            margin: 0;
+            font-size: clamp(13px, 1.2vw, 15px);
+            cursor: pointer;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: transform 0.12s, box-shadow 0.12s, filter 0.12s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+
+        .save-exit-form button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.15);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+        }
+
+        .save-exit-form button:active {
+            transform: translateY(1px);
+        }
+
+        .ai-cards-row {
+            margin-top: 0;
         }
 
 
@@ -247,27 +416,46 @@
                 }
 
         @keyframes dealFromRight {
-            0% { opacity: 0; transform: translate(40vw, 0) scale(0.5) rotate(90deg); }
+            0% { opacity: 0; transform: translate(var(--deal-from-x), var(--deal-from-y)) scale(0.5) rotate(90deg); }
             100% { opacity: 1; transform: translate(0, 0) scale(1) rotate(0deg); }            
+        }
+
+        @keyframes avatarPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255,215,0,0.3); }
+            50%       { box-shadow: 0 0 35px rgba(255,215,0,0.7); }
         }
 
         .already-dealt { opacity: 1; animation: none !important; }
         .already-dealt .card-inner { transform: rotateY(180deg); transition: none; }
         .ai-already-dealt { opacity: 1; animation: none !important; }
-        .btn-call { background-color: #f1f1f1; }
-        .btn-fold { background-color: #ff4c4c; color: white; }
-        .btn-raise { background-color: #2196F3; color: white; }
-        .btn-next { background-color: #FFD700; color: black; }
+
+
+
+        .btn-call  { background: linear-gradient(135deg,#2ecc71,#27ae60); color:#fff; border-color:#1e8449; }
+        .btn-fold  { background: linear-gradient(135deg,#e74c3c,#c0392b); color:#fff; border-color:#922b21; }
+        .btn-raise { background: linear-gradient(135deg,#3498db,#2980b9); color:#fff; border-color:#1a5276; }
+        .btn-next  { background: linear-gradient(135deg,#f1c40f,#f39c12); color:#1a1a1a; border-color:#b7770d; }
+        .btn-close { background: linear-gradient(135deg,#7f8c8d,#5d6d7e); color:#fff; border-color:#2c3e50; }
 
     </style>
 </head>
 <body>
 
+    <div class="top-right-ui">
+        <div class="round-stats">
+            <div class="stat-pill">Score: {{ state.user_score if state.user_score is defined else 0 }}</div>
+            <div class="stat-pill">Streak: {{ state.round_streak if state.round_streak is defined else 0 }}</div>
+        </div>
+        <form method="POST" action="/close_game" class="save-exit-form">
+            <button type="submit" class="btn-close">Save &amp; Exit</button>
+        </form>
+    </div>
+
     <aside class="game-log">
         <h3>Game Log</h3>
         <div class="game-log-list">
             {% if state.message_log %}
-                {% for message in state.message_log|reverse %}
+                {% for message in state.message_log %}
                     <div class="game-log-item">{{ message }}</div>
                 {% endfor %}
             {% else %}
@@ -276,15 +464,18 @@
         </div>
     </aside>
 
-    <div class="dealer-deck">
-        <img src="/static/cards/back.jpg">
-    </div>
-
     <div class="table-container">
+        <div class="ai-top-row">
+            <div class="ai-opponent-area">
+                <div class="ai-avatar">
+                    <div class="ai-avatar-face">
+                        <img src="/static/ai-opponent.png" alt="AI opponent avatar">
+                    </div>
+                    <div class="ai-dealer-label">Dealer</div>
+                </div>
+            </div>
 
-        <div>
-        <h3>AI's Cards</h3>
-        <div class="row">
+        <div class="row ai-cards-row">
         {% for card in state.ai_deck %}
             {% set is_new = state.phase == "preflop" %}
             <div class="card-container {% if not is_new %}ai-already-dealt{% endif %} {% if state.phase in ['showdown', 'game_over'] %}needs-flip{% endif %}" style="{% if is_new %}animation-delay: {{ loop.index0 * 0.15 }}s;{% endif %}">
@@ -296,39 +487,38 @@
         {% endfor %}
         </div>
         </div>
-    <div class="pot-container">
-        <h3 style="margin-bottom: 5px;">Pot</h3>
-        <div class="pot-icon">
-            ${{ state.pot }}
-        </div>
-    </div>
-    
-    <div class="deck-area">
-        <h3 style="text-align: center; margin-bottom: 5px;">Community Cards</h3>
-        <div class="row" style="min-height: 150px;">
-            {% for card in state.community_deck %}
-            {% set is_new = False %}
-            {% if state.phase == "flop" and loop.index0 < 3 %} {% set is_new = True %} {% endif %}
-            {% if state.phase == "turn" and loop.index0 == 3 %} {% set is_new = True %} {% endif %}
-            {% if state.phase == "river" and loop.index0 == 4 %} {% set is_new = True %} {% endif %}
-            
-            <div class="card-container {% if not is_new %}already-dealt{% else %}needs-flip{% endif %}" style="{% if is_new %}animation-delay: {{ (loop.index0 % 3) * 0.2 }}s;{% endif %}">
-                <div class="card-inner">
-                    <img src="/static/cards/back.jpg" class="card-back">
-                    <img src="/static/cards/{{ get_card_image_from_file(card) }}" class="card-front">
+
+    <div class="center-and-pot-row">
+        <div class="deck-area">
+            <h3 style="text-align: center; margin-bottom: 5px;">Community Cards</h3>
+            <div class="row" style="min-height: 150px;">
+                {% for card in state.community_deck %}
+                {% set is_new = False %}
+                {% if state.phase == "flop" and loop.index0 < 3 %} {% set is_new = True %} {% endif %}
+                {% if state.phase == "turn" and loop.index0 == 3 %} {% set is_new = True %} {% endif %}
+                {% if state.phase == "river" and loop.index0 == 4 %} {% set is_new = True %} {% endif %}
+                
+                <div class="card-container {% if not is_new %}already-dealt{% else %}needs-flip{% endif %}" style="{% if is_new %}animation-delay: {{ (loop.index0 % 3) * 0.2 }}s;{% endif %}">
+                    <div class="card-inner">
+                        <img src="/static/cards/back.jpg" class="card-back">
+                        <img src="/static/cards/{{ get_card_image_from_file(card) }}" class="card-front">
+                    </div>
                 </div>
+            {% endfor %}
             </div>
-        {% endfor %}
+        </div>
+
+        <div class="pot-container">
+            <h3 style="margin-bottom: 5px;">Pot</h3>
+            <div class="pot-icon">
+                ${{ state.pot }}
+            </div>
+            <div class="dealer-deck">
+                <img src="/static/cards/back.jpg">
+            </div>
         </div>
     </div>
 
-
-
-
-    <div class="user-bank-pot">
-            <span style="font-size: 16px; font-weight: normal;">Bank</span>
-            ${{ state.user_bank }}
-        </div>
 
 
 
@@ -336,16 +526,23 @@
 
 
 
-        <div class="row">
-            {% for card in state.user_deck %}
-                {% set is_new = state.phase == "preflop" %}
-                <div class="card-container {% if not is_new %}already-dealt{% else %}needs-flip{% endif %}" style="{% if is_new %}animation-delay: {{ loop.index0 * 0.15 + 0.3 }}s;{% endif %}">
-                    <div class="card-inner">
-                        <img src="/static/cards/back.jpg" class="card-back">
-                        <img src="/static/cards/{{ get_card_image_from_file(card) }}" class="card-front">
+        <div class="user-cards-with-bank">
+            <div class="row">
+                {% for card in state.user_deck %}
+                    {% set is_new = state.phase == "preflop" %}
+                    <div class="card-container {% if not is_new %}already-dealt{% else %}needs-flip{% endif %}" style="{% if is_new %}animation-delay: {{ loop.index0 * 0.15 + 0.3 }}s;{% endif %}">
+                        <div class="card-inner">
+                            <img src="/static/cards/back.jpg" class="card-back">
+                            <img src="/static/cards/{{ get_card_image_from_file(card) }}" class="card-front">
+                        </div>
                     </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
+
+            <div class="user-bank-pot">
+                <span style="font-size: 16px; font-weight: normal;">Bank</span>
+                ${{ state.user_bank }}
+            </div>
         </div>
 
         <form method="POST" class="game-actions">
@@ -358,15 +555,54 @@
             {% elif state.user_bank <= 0 %}
                 <p style="color: #ffd54f; font-size: 16px; font-weight: bold;">You're all-in. Dealing remaining cards to showdown.</p>
             {% else %}
-                <button type="submit" name="decision" value="call">Call / Check</button>
-                <button type="submit" name="decision" value="fold">Fold</button>
-                <br><br>
-                <input type="number" name="raise_amount" placeholder="Raise amount" min="1">
-                <button type="submit" name="decision" value="raise">Raise</button>
+                <div class="game-actions-row">
+                    <button type="submit" name="decision" value="call">Call / Check</button>
+                    <button type="submit" name="decision" value="fold">Fold</button>
+                    <input type="number" name="raise_amount" placeholder="Raise amount" min="1">
+                    <button type="submit" name="decision" value="raise">Raise</button>
+                </div>
             {% endif %}
         </form>
 
+
+
+ 
+
+
         <script>document.addEventListener("DOMContentLoaded", function() {
+            const startDealAnimation = () => {
+                const animatedCards = document.querySelectorAll('.card-container:not(.already-dealt):not(.ai-already-dealt)');
+                animatedCards.forEach((card) => {
+                    const existingDelay = card.style.animationDelay || '0s';
+                    card.style.animation = 'dealFromRight 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+                    card.style.animationDelay = existingDelay;
+                });
+            };
+
+            const setDealOriginsFromDeck = () => {
+                const dealerDeck = document.querySelector('.dealer-deck');
+                if (!dealerDeck) {
+                    return;
+                }
+
+                const deckRect = dealerDeck.getBoundingClientRect();
+                const deckX = deckRect.left + (deckRect.width / 2);
+                const deckY = deckRect.top + (deckRect.height / 2);
+                const animatedCards = document.querySelectorAll('.card-container:not(.already-dealt):not(.ai-already-dealt)');
+
+                animatedCards.forEach((card) => {
+                    const cardRect = card.getBoundingClientRect();
+                    const cardX = cardRect.left + (cardRect.width / 2);
+                    const cardY = cardRect.top + (cardRect.height / 2);
+                    card.style.setProperty('--deal-from-x', `${deckX - cardX}px`);
+                    card.style.setProperty('--deal-from-y', `${deckY - cardY}px`);
+                });
+            };
+
+            setDealOriginsFromDeck();
+            startDealAnimation();
+            window.addEventListener('resize', setDealOriginsFromDeck);
+
             setTimeout(() => {
                 const cardsToFlip = document.querySelectorAll('.needs-flip');
                 cardsToFlip.forEach((card, index) => {
@@ -376,9 +612,9 @@
                 });
             }, 600); //waiting time for flip
         });
-    </script>
+        </script>
+    </div>  <!-- closes .user-area -->
+    </div>  <!-- closes .table-container -->
 
-    </div>
-    </div>
 </body>
 </html>
