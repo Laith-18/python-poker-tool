@@ -15,6 +15,48 @@ game_engine = GameEngine()
 
 active_games = {} # Dictionary to store active game states for each user
 
+
+def settle_showdown(state, username):
+    state.phase = "showdown"
+
+    user_strength = game_engine.evaluate_user_strength(state)
+    ai_strength = game_engine.evaluate_ai_strength(state)
+
+    if user_strength > ai_strength:
+        state.round_message = f"You win the hand! Your hand was: {user_strength}, AI hand was: {ai_strength}."
+        state.user_bank += state.pot
+    elif ai_strength > user_strength:
+        state.round_message = f"AI wins the hand. Your hand was: {user_strength}, AI hand was: {ai_strength}."
+    else:
+        from game.strength_determiner import rank_to_value
+
+        user_high_card = max([rank_to_value(card[0]) for card in state.user_deck])
+        ai_high_card = max([rank_to_value(card[0]) for card in state.ai_deck])
+
+        if user_high_card > ai_high_card:
+            state.round_message = f"You win the hand with a higher card! Your hand was: {user_strength} with high card {user_high_card}, AI hand was: {ai_strength} with high card {ai_high_card}."
+            state.user_bank += state.pot
+        elif ai_high_card > user_high_card:
+            state.round_message = f"AI wins the hand with a higher card. Your hand was: {user_strength} with high card {user_high_card}, AI hand was: {ai_strength} with high card {ai_high_card}."
+        else:
+            state.round_message = f"It's a tie! Your hand was: {user_strength}, AI hand was: {ai_strength}. Pot is split."
+            state.user_bank += state.pot // 2
+
+    state.pot = 0
+    session["user_bank"] = state.user_bank
+    login_system.update_bank(username, state.user_bank)
+
+
+def resolve_all_in_if_needed(state, username):
+    if state.user_bank > 0 or state.phase in ["showdown", "game_over"]:
+        return
+
+    missing_cards = 5 - len(state.community_deck)
+    if missing_cards > 0:
+        state.community_deck = game_engine.community_cards(state.community_deck, count=missing_cards)
+
+    settle_showdown(state, username)
+
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -54,6 +96,7 @@ def play_game():
         active_games[username] = state
     
     state = active_games[username]
+    resolve_all_in_if_needed(state, username)
 
     if request.method=="POST":
         decision = request.form.get("decision")
@@ -97,39 +140,16 @@ def play_game():
                 state.community_deck = game_engine.community_cards(state.community_deck, count=1)
                 state.phase = "river"
             elif state.phase == "river":
-                state.phase = "showdown"
-
-
-                user_strength = game_engine.evaluate_user_strength(state)
-                ai_strength = game_engine.evaluate_ai_strength(state)
-
-                if user_strength > ai_strength:
-                    state.round_message = f"You win the hand! Your hand was: {user_strength}, AI hand was: {ai_strength}."
-                    state.user_bank += state.pot
-                elif ai_strength > user_strength:
-                    state.round_message = f"AI wins the hand. Your hand was: {user_strength}, AI hand was: {ai_strength}."
-                else:
-                    from game.strength_determiner import rank_to_value
-
-                    user_high_card = max([rank_to_value(card[0]) for card in state.user_deck])
-                    ai_high_card = max([rank_to_value(card[0]) for card in state.ai_deck])
-
-                    if user_high_card > ai_high_card:
-                        state.round_message = f"You win the hand with a higher card! Your hand was: {user_strength} with high card {user_high_card}, AI hand was: {ai_strength} with high card {ai_high_card}."
-                        state.user_bank += state.pot
-                    elif ai_high_card > user_high_card:
-                        state.round_message = f"AI wins the hand with a higher card. Your hand was: {user_strength} with high card {user_high_card}, AI hand was: {ai_strength} with high card {ai_high_card}."
-
-                    else:
-                        state.round_message = f"It's a tie! Your hand was: {user_strength}, AI hand was: {ai_strength}. Pot is split."
-                        state.user_bank += state.pot // 2
-                state.pot = 0
-
-                session["user_bank"] = state.user_bank # Update the user's bank in the session after the hand is resolved
-                login_system.update_bank(username, state.user_bank) # Update the user's bank in the database after the hand is resolved
+                settle_showdown(state, username)
 
         elif outcome == "continue":
             state.round_message = "Betting round continues. AI raise. Respond: call, raise, or fold."
+        elif outcome == "invalid_funds":
+            state.round_message = "Insufficient funds for that move. Try a smaller raise or call/fold."
+        elif outcome == "invalid_action":
+            state.round_message = "Invalid action for the current state. Please choose call, raise, or fold."
+
+        resolve_all_in_if_needed(state, username)
         
     active_games[username] = state
 

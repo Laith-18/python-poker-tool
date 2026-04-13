@@ -28,8 +28,11 @@ class UserDecisionMaking:
                 self.recent_bet = 0
                 return [0, self.pot, self.user_bank, self.recent_bet]
                 #Output format: [0, pot, user_bank, recent_bet]
+            return "invalid_funds"
         elif decision == "raise":
             raise_amount = int(raise_amount_input)  # Convert the raise amount input to an integer
+            if raise_amount <= 0:
+                return "invalid_action"
             total_cost = raise_amount + self.recent_bet  # total chips user must put in
             if total_cost > self.user_bank:
                 return "invalid_funds"  # User cannot afford the raise 
@@ -37,6 +40,7 @@ class UserDecisionMaking:
             self.pot += total_cost
             self.recent_bet = total_cost
             return [raise_amount, self.pot, self.user_bank, self.recent_bet]
+        return "invalid_action"
 
 #no longer needed as flask will handle looping and input validation
 """

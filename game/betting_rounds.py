@@ -31,6 +31,12 @@ class BettingRounds:
             temp_u = self.user_decision(going_first=False, recent_bet=self.recent_bet, decision=user_decision, raise_amount=user_raise_amount)  # Get the user's decision based on the AI's action
             if temp_u == "fold":
                 return "fold"
+            elif temp_u == "invalid_funds":
+                return "invalid_funds"
+            elif temp_u == "invalid_action":
+                return "invalid_action"
+            elif temp_u is None:
+                return "invalid_action"
             elif isinstance(temp_u, list):
                 raise_amount_u = int(temp_u[0])
                 self.pot = temp_u[1]
@@ -57,6 +63,12 @@ class BettingRounds:
         temp_u = self.user_decision(going_first=True,recent_bet=self.recent_bet,decision=user_decision, raise_amount=user_raise_amount)  # Get the user's decision based on the AI's action     
         if temp_u == "fold":
             return "fold"
+        elif temp_u == "invalid_funds":
+            return "invalid_funds"
+        elif temp_u == "invalid_action":
+            return "invalid_action"
+        elif temp_u is None:
+            return "invalid_action"
     
         elif isinstance(temp_u, list):
             raise_amount_u = int(temp_u[0])  

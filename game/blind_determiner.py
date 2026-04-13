@@ -22,7 +22,22 @@ class BlindDecider:
 
     def small_blind_user(self, entered_bet=None): # Method for the user small blind and the AI big blind logic
         bank_system = BankSystem(self.user_bank) # Create an instance of the BankSystem class
-        result = bank_system.place_bet(entered_bet) # Call the place_bet method
+        if self.user_bank <= 0:
+            self.recent_bet = 0
+            return [self.pot, self.ai_bet, self.recent_bet, self.small_blind, self.user_bank]
+
+        # Ensure blind request is valid for current bankroll.
+        safe_bet = entered_bet if entered_bet is not None else 1
+        safe_bet = max(1, min(int(safe_bet), int(self.user_bank)))
+
+        result = bank_system.place_bet(safe_bet) # Call the place_bet method
+        if not isinstance(result, list):
+            # Fallback to posting whatever chips are available (all-in when needed).
+            result = bank_system.place_bet(self.user_bank)
+            if not isinstance(result, list):
+                self.recent_bet = 0
+                return [self.pot, self.ai_bet, self.recent_bet, self.small_blind, self.user_bank]
+
         self.user_bank, self.recent_bet = result # Unpack the result
         big_blind = self.recent_bet * 2
         self.pot += self.recent_bet + big_blind # Add the recent bets to the pot
@@ -33,9 +48,11 @@ class BlindDecider:
     def ai_small_blind(self): # Method for the AI small blind and the user big blind logic
         self.ai_bet = random.randint(2,8) # Random small blind amount between 2 and 8, a fair and reasonable amount incase users are low on bank balance
         self.pot += self.ai_bet # Add the AI bet to the pot
-        self.recent_bet = self.ai_bet*2 # The AI's bet is double the small blind
-        self.user_bank -= self.recent_bet # Deduct the recent bet from the user's bank
-        self.pot += self.recent_bet # Add the recent bet to the pot
+        required_user_bet = self.ai_bet*2 # The AI's bet is double the small blind
+        user_contribution = min(int(self.user_bank), int(required_user_bet))
+        self.recent_bet = user_contribution
+        self.user_bank -= user_contribution # Deduct the user's available contribution
+        self.pot += user_contribution # Add the recent bet to the pot
         game_state = [self.pot, self.ai_bet, self.recent_bet, self.small_blind,self.user_bank] # Return the game state
         return game_state
         #Output format: [pot, ai_bet, recent_bet, small_blind, user_bank]

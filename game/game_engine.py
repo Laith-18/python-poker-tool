@@ -69,6 +69,10 @@ class GameEngine:
             return "fold"
         elif result == "ai_folded":
             return "ai_folded"
+        elif result == "invalid_funds":
+            return "invalid_funds"
+        elif result == "invalid_action":
+            return "invalid_action"
 
         else:
             state.pot = result[0]
