@@ -131,7 +131,6 @@
         {% endfor %}
 
         </div>
-    </div>
 
     <div class="pot-container">
         <h3 style="margin-bottom: 5px;">Pot</h3>
@@ -162,12 +161,12 @@
             {% endfor %}
             </div>
 
-        { % if state.round_message %}
+        {% if state.round_message %}
             <p style="color: yellow; font-size: 18px;">{{ state.round_message }}</p>
         {% endif %}
 
 
-        <form method ="POST">
+        <form method="POST" class="game-actions">
             {% if state.phase in ["game_over", "showdown"] %}
                 <button type="submit" name="decision" value="next_hand" style="padding: 10px; font-size: 16px;">Play Next Hand</button>
             {% else %}
