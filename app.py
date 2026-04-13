@@ -81,6 +81,7 @@ def play_game():
             state.round_message= "AI folded. You win the pot!"
             state.user_bank += state.pot
             state.pot = 0
+            login_system.update_bank(username, state.user_bank) # Update the user's bank in the database after winning the pot
         
         elif outcome == "round_over":
             state.recent_bet = 0 # Reset recent bet for the next round
