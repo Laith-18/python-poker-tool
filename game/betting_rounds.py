@@ -8,22 +8,25 @@ class BettingRounds:
         self.pot = pot
         self.user_bank = user_bank
         self.recent_bet = recent_bet
-        #self.visual_logic = visual_logic
+        self.ai_decision_taken = "" #readable description of ai last move
 
     def ai_first(self, user_decision=None, user_raise_amount=0):
 
         if user_decision is None:
-            temp = self.decision_making(True, 0)  # AI makes its initial decision with no raise amount
+            temp = self.decision_making(going_first=True, raise_amount=0)  # AI makes its initial decision with no raise amount
             if temp[0] == "call":
                 self.pot += self.recent_bet
+                self.ai_decision_taken = "called"
                 return [self.pot, self.user_bank, 0, "round_over"]  # Return the pot and user bank after the betting round, along with a flag to indicate the round is over
 
             elif temp[0] == "raise":
+                self.ai_decision_taken = f"raises to {int(temp[1])}"
                 raise_amount = int(round(temp[1]))
                 self.pot += raise_amount
                 self.recent_bet = raise_amount
                 return [self.pot, self.user_bank, self.recent_bet, "continue"]  # Return the pot and user bank after the betting round
             elif temp[0] == "fold":
+                self.ai_decision_taken = "folded"
                 return "ai_folded"
 
         if user_decision:
@@ -48,11 +51,14 @@ class BettingRounds:
 
             temp = self.decision_making(True, raise_amount_u)
             if temp[0] == "fold":
+                self.ai_decision_taken = "folded"
                 return "ai_folded"
             elif temp[0] == "call":
                 self.pot += self.recent_bet  # Add the recent bet to the pot
+                self.ai_decision_taken = "called"
                 return [self.pot, self.user_bank, 0, "round_over"]  # Return the pot and user bank after the betting round, along with a flag to indicate the round is over
             elif temp[0] == "raise":
+                self.ai_decision_taken = f"raises to {int(temp[1])}"
                 raise_amount = int(round(temp[1]))
                 self.pot += raise_amount  # Add the raise amount to the pot
                 self.recent_bet = raise_amount  # Update the recent bet to the new raise amount
@@ -81,16 +87,19 @@ class BettingRounds:
           
         temp = self.decision_making(False,raise_amount_u)
         if temp[0] == "fold":
+            self.ai_decision_taken = "folded"
             return "ai_folded"
 
         elif temp[0] == "call":
                 self.pot += self.recent_bet  # Add the recent bet to the pot
+                self.ai_decision_taken = "called"
                 return [self.pot, self.user_bank, 0, "round_over"]  # Return the pot and user bank after the betting round, along with a flag to indicate the round is over
             
         elif temp[0] == "raise":
             raise_amount = int(round(temp[1]))
             self.pot += raise_amount + self.recent_bet  # Add both the raise amount and the recent bet to the pot
             self.recent_bet = raise_amount + self.recent_bet  # Update the recent bet
+            self.ai_decision_taken = f"raises to {self.recent_bet}"
             return [self.pot, self.user_bank, self.recent_bet, "continue"]  # Return the pot and user bank after the betting round
 
     def user_decision(self, going_first,recent_bet, decision, raise_amount):

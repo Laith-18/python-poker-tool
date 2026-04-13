@@ -65,6 +65,8 @@ class GameEngine:
         else:
             result = betting.ai_first(decision, user_raise_amount=raise_amount)
         
+        state.ai_last_action = betting.ai_decision_taken
+        
         if result == "fold":
             return "fold"
         elif result == "ai_folded":
