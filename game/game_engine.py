@@ -1,3 +1,5 @@
+import random
+
 from game.card_selector import Deck             
 from game.login_system import LoginClass                 
 from game.blind_determiner import BlindDecider            
@@ -39,7 +41,7 @@ class GameEngine:
         state.small_blind = blind_result[3]
 
         if state.small_blind:
-            result = decider.small_blind_user(entered_bet=starting)
+            result = decider.small_blind_user(entered_bet=random.randint(2,8))
             state.pot = result[0]
             state.recent_bet = result[2]
             state.ai_bet = state.recent_bet * 2
