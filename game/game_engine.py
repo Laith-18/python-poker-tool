@@ -63,13 +63,12 @@ class GameEngine:
         if user_goes_first:
             result = betting.user_first(decision, user_raise_amount=raise_amount)
         else:
-            result = betting.ai_first(decision, raise_amount=raise_amount)
+            result = betting.ai_first(decision, user_raise_amount=raise_amount)
         
         if result == "fold":
             return "fold"
-        elif result == "ai_fold":
-            state.user_bank += state.pot
-            return "ai_fold"
+        elif result == "ai_folded":
+            return "ai_folded"
 
         else:
             state.pot = result[0]

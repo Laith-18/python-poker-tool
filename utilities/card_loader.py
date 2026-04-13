@@ -7,4 +7,4 @@ def get_card_image_from_file(card):
     rank = card[0]
     suit = card[1]
 
-    return f"cards/{ranks[rank]}_of_{suits[suit]}.png" #Load the image
+    return f"{ranks[rank]}_of_{suits[suit]}.png" #Load the image

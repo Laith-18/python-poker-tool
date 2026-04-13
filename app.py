@@ -58,6 +58,7 @@ def play_game():
     if request.method=="POST":
         decision = request.form.get("decision")
         raise_amount = request.form.get("raise_amount",0,type=int)
+        outcome = None
 
 
         if decision == "next_hand":
