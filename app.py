@@ -161,9 +161,10 @@ def play_game():
         
         elif outcome == "round_over":
             if decision == "call":
-                add_game_message(state, "You call/check. Betting round complete.")
+                add_game_message(state, "You call/check.")
             elif decision == "raise":
-                add_game_message(state, f"You raise by {raise_amount}. AI calls. Betting round complete.")
+                add_game_message(state, f"You raise by {raise_amount}.")
+                add_game_message(state,f"AI {state.ai_last_action}. Round over.")
             state.recent_bet = 0 # Reset recent bet for the next round
         
             if state.phase =="preflop":
@@ -179,7 +180,7 @@ def play_game():
                 settle_showdown(state, username)
 
         elif outcome == "continue":
-            add_game_message(state, f"AI raises to {state.recent_bet}. Respond with call, raise, or fold.")
+            add_game_message(state, f"A {state.ai_last_action}. Respond with call, raise, or fold.")
         elif outcome == "invalid_funds":
             add_game_message(state, "Insufficient funds for that move. Try a smaller raise or call/fold.")
         elif outcome == "invalid_action":
