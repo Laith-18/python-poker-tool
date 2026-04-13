@@ -193,6 +193,15 @@ def play_game():
 
     return render_template("index.html", state=state, get_card_image_from_file=get_card_image_from_file)
 
+@app.route("/close_game", methods=["POST"])
+def close_game():
+    if "username" in session:
+        username = session["username"]
+        state = active_games.get(username, state.user_bank)  # Remove the user's game state from active games
+        active_games.pop(username, None)
+        session.clear()  # Clear the session to log the user out
+    return render_template("login.html", message="Game closed. You have been logged out.")
+
 if __name__ == "__main__":
     app.run(debug=True)
 
