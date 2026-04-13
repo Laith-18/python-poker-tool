@@ -28,7 +28,7 @@ class BettingRounds:
 
         if user_decision:
 
-            temp_u = self.user_decision(going_first=False, recent_bet=self.recent_bet, decision=self.user_decision, raise_amount=user_raise_amount)  # Get the user's decision based on the AI's action
+            temp_u = self.user_decision(going_first=False, recent_bet=self.recent_bet, decision=user_decision, raise_amount=user_raise_amount)  # Get the user's decision based on the AI's action
             if temp_u == "fold":
                 return "fold"
             elif isinstance(temp_u, list):
