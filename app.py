@@ -18,6 +18,25 @@ active_games = {} # Dictionary to store active game states for each user
 MAX_LOG_MESSAGES = 10
 
 
+def ensure_progress_fields(state):
+    if not hasattr(state, "user_score"):
+        state.user_score = 0
+    if not hasattr(state, "round_streak"):
+        state.round_streak = 0
+
+
+def apply_round_result(state, result):
+    ensure_progress_fields(state)
+    if result == "win":
+        state.user_score += 1
+        state.round_streak += 1
+    elif result == "loss":
+        state.user_score -= 1
+        state.round_streak = 0
+    elif result == "tie":
+        state.round_streak = 0
+
+
 def add_game_message(state, message):
     if not message:
         return
@@ -30,6 +49,23 @@ def add_game_message(state, message):
     state.round_message = message
 
 
+def action_call_or_check(amount_to_match):
+    return "check" if amount_to_match <= 0 else "call"
+
+
+def format_ai_action(ai_action, amount_to_match):
+    if not ai_action:
+        return f"AI {action_call_or_check(amount_to_match)}s."
+
+    normalized = ai_action.strip().lower()
+    if normalized == "called":
+        return f"AI {action_call_or_check(amount_to_match)}s."
+    if normalized == "folded":
+        return "AI folds."
+
+    return f"AI {ai_action}."
+
+
 def log_blinds_message(state):
     if state.small_blind:
         user_small_blind = max(1, state.ai_bet // 2)
@@ -40,14 +76,17 @@ def log_blinds_message(state):
 
 def settle_showdown(state, username):
     state.phase = "showdown"
+    ensure_progress_fields(state)
 
     user_strength = game_engine.evaluate_user_strength(state)
     ai_strength = game_engine.evaluate_ai_strength(state)
 
     if user_strength > ai_strength:
+        apply_round_result(state, "win")
         state.round_message = f"You win the hand! Your hand was: {user_strength}, AI hand was: {ai_strength}."
         state.user_bank += state.pot
     elif ai_strength > user_strength:
+        apply_round_result(state, "loss")
         state.round_message = f"AI wins the hand. Your hand was: {user_strength}, AI hand was: {ai_strength}."
     else:
         from game.strength_determiner import rank_to_value
@@ -56,11 +95,14 @@ def settle_showdown(state, username):
         ai_high_card = max([rank_to_value(card[0]) for card in state.ai_deck])
 
         if user_high_card > ai_high_card:
+            apply_round_result(state, "win")
             state.round_message = f"You win the hand with a higher card! Your hand was: {user_strength} with high card {user_high_card}, AI hand was: {ai_strength} with high card {ai_high_card}."
             state.user_bank += state.pot
         elif ai_high_card > user_high_card:
+            apply_round_result(state, "loss")
             state.round_message = f"AI wins the hand with a higher card. Your hand was: {user_strength} with high card {user_high_card}, AI hand was: {ai_strength} with high card {ai_high_card}."
         else:
+            apply_round_result(state, "tie")
             state.round_message = f"It's a tie! Your hand was: {user_strength}, AI hand was: {ai_strength}. Pot is split."
             state.user_bank += state.pot // 2
 
@@ -117,16 +159,21 @@ def play_game():
     if username not in active_games:
         state = game_engine.setup_new_game(username, session["user_bank"])
         state = game_engine.determine_blinds(state)
+        ensure_progress_fields(state)
+        state.message_log = []
+        add_game_message(state, f"Welcome {username}! Starting a new game of Texas Hold'em.")
+        game_engine.evaluate_ai_strength(state)
         log_blinds_message(state)
-
         active_games[username] = state
     
     state = active_games[username]
+    ensure_progress_fields(state)
     resolve_all_in_if_needed(state, username)
 
     if request.method=="POST":
         decision = request.form.get("decision")
         raise_amount = request.form.get("raise_amount",0,type=int)
+        bet_to_match_before_action = state.recent_bet
         outcome = None
 
 
@@ -138,9 +185,15 @@ def play_game():
                 return redirect(url_for("play_game"))
 
             #reset the game state for the next hand but keep the username and user bank
-            active_games[username] = game_engine.setup_new_game(username, state.user_bank)
-            active_games[username] = game_engine.determine_blinds(active_games[username])
-            log_blinds_message(active_games[username])
+            new_state = game_engine.setup_new_game(username, state.user_bank)
+            new_state = game_engine.determine_blinds(new_state)
+            ensure_progress_fields(new_state)
+            new_state.user_score = state.user_score
+            new_state.round_streak = state.round_streak
+            new_state.message_log = []
+            add_game_message(new_state, f"Welcome {username}! Starting a new game of Texas Hold'em.")
+            log_blinds_message(new_state)
+            active_games[username] = new_state
             return redirect(url_for("play_game"))
 
         #otherwise we are in the middle of a hand and need to process the user's decision
@@ -149,11 +202,13 @@ def play_game():
         
         if outcome == "fold":
             state.phase = "game_over"
+            apply_round_result(state, "loss")
             add_game_message(state, "You folded. AI wins the pot.")
             state.pot = 0
         
         elif outcome == "ai_folded":
             state.phase = "game_over"
+            apply_round_result(state, "win")
             add_game_message(state, "AI folded. You win the pot!")
             state.user_bank += state.pot
             state.pot = 0
@@ -161,10 +216,15 @@ def play_game():
         
         elif outcome == "round_over":
             if decision == "call":
-                add_game_message(state, "You call/check.")
+                add_game_message(state, f"You {action_call_or_check(bet_to_match_before_action)}.")
+                add_game_message(state, format_ai_action(state.ai_last_action, bet_to_match_before_action))
             elif decision == "raise":
                 add_game_message(state, f"You raise by {raise_amount}.")
-                add_game_message(state,f"AI {state.ai_last_action}. Round over.")
+                if state.ai_last_action:
+                    if state.ai_last_action.strip().lower() == "called":
+                        add_game_message(state, "AI calls. Round over.")
+                    else:
+                        add_game_message(state, f"{format_ai_action(state.ai_last_action, 1)} Round over.")
             state.recent_bet = 0 # Reset recent bet for the next round
         
             if state.phase =="preflop":
@@ -180,13 +240,15 @@ def play_game():
                 settle_showdown(state, username)
 
         elif outcome == "continue":
-            add_game_message(state, f"A {state.ai_last_action}. Respond with call, raise, or fold.")
+            add_game_message(state, f"{format_ai_action(state.ai_last_action, bet_to_match_before_action)} Your turn.")
         elif outcome == "invalid_funds":
             add_game_message(state, "Insufficient funds for that move. Try a smaller raise or call/fold.")
         elif outcome == "invalid_action":
             add_game_message(state, "Invalid action for the current state. Please choose call, raise, or fold.")
 
         resolve_all_in_if_needed(state, username)
+        active_games[username] = state
+        return redirect(url_for("play_game"))
         
     active_games[username] = state
 
@@ -197,10 +259,12 @@ def play_game():
 def close_game():
     if "username" in session:
         username = session["username"]
-        state = active_games.get(username, state.user_bank)  # Remove the user's game state from active games
+        state = active_games.get(username)
+        if state is not None:
+            login_system.update_bank(username, state.user_bank)
         active_games.pop(username, None)
-        session.clear()  # Clear the session to log the user out
-    return render_template("login.html", message="Game closed. You have been logged out.")
+        session.clear()
+    return redirect(url_for("login"))
 
 if __name__ == "__main__":
     app.run(debug=True)
